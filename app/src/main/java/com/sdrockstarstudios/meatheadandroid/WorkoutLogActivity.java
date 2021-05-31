@@ -26,8 +26,6 @@ public class WorkoutLogActivity extends AppCompatActivity
         currentDateTime = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()).getTime();
         String date = DateFormat.getDateFormat(this).format(currentDateTime);
         workoutDateTextView.setText(date);
-
-
     }
 
     public void add_exercise(View view){
