@@ -3,18 +3,21 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:id="@+id/addSetLinearLayout">
-<!--    <EditText-->
-<!--            android:id="@+id/exercise_name_entry"-->
-<!--            android:inputType="text"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="16dp"-->
-<!--            android:layout_marginLeft="4dp"-->
-<!--            android:layout_marginRight="4dp"-->
-<!--            android:layout_marginBottom="4dp"-->
-<!--            android:hint="@string/exercise_name" />-->
-<!--    <CheckBox-->
-<!--            android:text="Reps Only"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content" android:id="@+id/reps_only_checkbox"/>-->
+    <LinearLayout android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/addSetHorLinearLayout"
+                  android:orientation="horizontal">
+        <EditText android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:id="@+id/weightEditText"
+                  android:inputType="number"
+                  android:hint="lbs"
+                  android:maxLength="3"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:text="X"/>
+        <EditText android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:id="@+id/repsEditText"
+                  android:inputType="number"
+                  android:hint="reps"
+                  android:maxLength="3"/>
+    </LinearLayout>
 </LinearLayout>

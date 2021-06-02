@@ -8,9 +8,12 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
 
 public class AddSetDialogFragment extends DialogFragment {
     public interface NoticeDialogListener {
@@ -20,9 +23,12 @@ public class AddSetDialogFragment extends DialogFragment {
 
     AddExerciseDialogFragment.NoticeDialogListener listener;
     boolean repsOnly;
+    String tagToAddTo;
 
-    public AddSetDialogFragment(boolean repsOnly){
+
+    public AddSetDialogFragment(boolean repsOnly, String tagToAddTo){
         this.repsOnly = repsOnly;
+        this.tagToAddTo = tagToAddTo;
     }
 
     @Override
@@ -42,7 +48,7 @@ public class AddSetDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
-        builder.setView(inflater.inflate(R.layout.dialog_add_exercise, null))
+        builder.setView(inflater.inflate(R.layout.dialog_add_set, null))
                 .setPositiveButton(R.string.add_exercise_dialog_accept, (dialog, id) ->
                         listener.onDialogPositiveClick(AddSetDialogFragment.this))
                 .setNegativeButton(R.string.cancel, (dialog, which) ->
@@ -50,23 +56,59 @@ public class AddSetDialogFragment extends DialogFragment {
 
         AlertDialog dialog = builder.create();
 
+        if(repsOnly){
+            EditText weightTextEdit = dialog.findViewById(R.id.weightEditText);
+            LinearLayout addSetHorLinearLayout = dialog.findViewById(R.id.addSetHorLinearLayout);
+            addSetHorLinearLayout.removeView(weightTextEdit);
+        }
+
         dialog.setOnShowListener(dialogInterface -> {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-            EditText exerciseNameEditText = dialog.findViewById(R.id.exercise_name_entry);
-            exerciseNameEditText.addTextChangedListener(new TextWatcher() {
+            EditText repsEditText = dialog.findViewById(R.id.repsEditText);
+            repsEditText.addTextChangedListener(new TextWatcher() {
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
 
                 @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(s.length() != 0);
+                    if(repsOnly){
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(s.length() != 0);
+                    }
+                    else{
+                        EditText weightEditText = dialog.findViewById(R.id.weightEditText);
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(s.length() != 0 && weightEditText.getText().length() != 0);
+                    }
                 }
             });
+
+            if(!repsOnly){
+                EditText weightEditText = dialog.findViewById(R.id.weightEditText);
+                weightEditText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(s.length() != 0 && repsEditText.getText().length() != 0);
+                    }
+                });
+            }
         });
-        
+
         return dialog;
     }
 }
