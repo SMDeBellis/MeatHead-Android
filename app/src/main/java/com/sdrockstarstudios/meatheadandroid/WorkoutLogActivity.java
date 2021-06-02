@@ -1,8 +1,5 @@
 package com.sdrockstarstudios.meatheadandroid;
 
-
-import android.text.InputFilter;
-import android.text.InputType;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.*;
@@ -17,6 +14,7 @@ public class WorkoutLogActivity extends AppCompatActivity
         implements AddExerciseDialogFragment.NoticeDialogListener, DeleteExerciseDialogFragment.NoticeDialogListener{
 
     Date currentDateTime;
+    LinearLayout addToSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +36,11 @@ public class WorkoutLogActivity extends AppCompatActivity
         newFragment.show(getSupportFragmentManager(), "deleteExercise");
     }
 
+    public void addSet(boolean repsOnly){
+        DialogFragment newFragment = new AddSetDialogFragment(repsOnly, "place_holder");
+        newFragment.show(getSupportFragmentManager(), "addSet");
+    }
+
     private void handleDeleteExerciseDialogPositiveClick(DialogFragment dialog){
         LinearLayout workoutContentLinearLayout = findViewById(R.id.WorkoutContentLinearLayout);
         workoutContentLinearLayout.removeView(((DeleteExerciseDialogFragment) dialog).getViewToDelete());
@@ -54,20 +57,23 @@ public class WorkoutLogActivity extends AppCompatActivity
         View newExercise = buildNewWeightExerciseView(exerciseName, repsOnly, UUID.randomUUID());
         LinearLayout exerciseLayout = findViewById(R.id.WorkoutContentLinearLayout);
         exerciseLayout.addView(newExercise);
-        ScrollView exerciseScrollView = (ScrollView) findViewById(R.id.exerciseEntryScrollView);
-        exerciseScrollView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                exerciseScrollView.fullScroll(ScrollView.FOCUS_DOWN);
-            }
-        }, 100L);
+        ScrollView exerciseScrollView = findViewById(R.id.exerciseEntryScrollView);
+        exerciseScrollView.postDelayed(() -> exerciseScrollView.fullScroll(ScrollView.FOCUS_DOWN), 100L);
         exerciseScrollView.fullScroll(ScrollView.FOCUS_AFTER_DESCENDANTS);
+    }
+
+    private void handleAddSetDialogPositiveClick(DialogFragment dialog){
+        addNewExerciseSetViewFromDialog(dialog);
+        addToSet = null;
     }
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
         if(dialog instanceof DeleteExerciseDialogFragment){
             handleDeleteExerciseDialogPositiveClick(dialog);
+        }
+        else if(dialog instanceof AddSetDialogFragment){
+            handleAddSetDialogPositiveClick(dialog);
         }
         else {
             handleAddExerciseDialogPositiveClick(dialog);
@@ -99,23 +105,15 @@ public class WorkoutLogActivity extends AppCompatActivity
         // container for [LinearLayoutHor[weightxreps, add button]]
         HorizontalScrollView horScrollView = new HorizontalScrollView(this);
 //        horScrollView.addView(exerciseContainer);
-        horScrollView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                horScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
-            }
-        }, 110L);
+        horScrollView.postDelayed(() -> horScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT), 110L);
 
         LinearLayout horScrollViewLinearLayout = new LinearLayout(this);
         horScrollViewLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
 
         horScrollViewLinearLayout.addView(addSetButton);
         addSetButton.setOnClickListener(v -> {
-            // for now i'm just doing weighted sets but in the future I want a popup to appear with a selection
-            // for either reps or weighted and then the user can add either the weight and reps or just reps depending
-            // on the set type.
-            View setView = buildNewExerciseSetView(repsOnly, UUID.randomUUID());
-            horScrollViewLinearLayout.addView(setView, horScrollViewLinearLayout.getChildCount() - 1);
+            addToSet = horScrollViewLinearLayout;
+            addSet(repsOnly);
         });
 
         horScrollView.addView(horScrollViewLinearLayout);
@@ -129,31 +127,33 @@ public class WorkoutLogActivity extends AppCompatActivity
         return exerciseContainer;
     }
 
-    private View buildNewExerciseSetView(boolean repsOnly, UUID setID){
+    private void addNewExerciseSetViewFromDialog(DialogFragment dialog){
 
-        EditText repsEditText = new EditText(this);
-        repsEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
-        repsEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(3) });
-        repsEditText.setHint("reps");
+        boolean repsOnly = ((AddSetDialogFragment) dialog).repsOnly;
 
         LinearLayout setDataLayout = new LinearLayout(this);
         setDataLayout.setOrientation(LinearLayout.HORIZONTAL);
 
         TextView multiplierTextView = new TextView(this);
+        multiplierTextView.setTextSize(30);
         multiplierTextView.setText("X");
 
-        if(!repsOnly){
-            EditText weightEditText = new EditText(this);
-            weightEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
-            weightEditText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(3) });
-            weightEditText.setHint("lbs");
+        TextView repsTextView = new TextView(this);
+        repsTextView.setTextSize(30);
+        EditText repsEditText = dialog.getDialog().findViewById(R.id.repsEditText);
+        repsTextView.setText(repsEditText.getText().toString());
 
-            setDataLayout.addView(weightEditText);
+        if(!repsOnly){
+            TextView weightTextView = new TextView(this);
+            weightTextView.setTextSize(30);
+            EditText weightEditText = dialog.getDialog().findViewById(R.id.weightEditText);
+            weightTextView.setText(weightEditText.getText().toString());
+            setDataLayout.addView(weightTextView);
         }
 
         setDataLayout.addView(multiplierTextView);
-        setDataLayout.addView(repsEditText);
-        return setDataLayout;
-    }
+        setDataLayout.addView(repsTextView);
 
+        addToSet.addView(setDataLayout, addToSet.getChildCount() - 1);
+    }
 }
