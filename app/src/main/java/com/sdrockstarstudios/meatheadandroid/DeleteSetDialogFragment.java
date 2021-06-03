@@ -4,25 +4,18 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-public class DeleteExerciseDialogFragment extends DialogFragment {
+public class DeleteSetDialogFragment extends DialogFragment {
+    int containerToRemoveFromId;
+    int idToRemove;
 
-    private View viewToDelete;
-
-    public View getViewToDelete() {
-        return viewToDelete;
-    }
-
-    public DeleteExerciseDialogFragment(View view){
-        viewToDelete = view;
+    public DeleteSetDialogFragment(int containerId, int idToRemove){
+        this.containerToRemoveFromId = containerId;
+        this.idToRemove = idToRemove;
     }
 
     public interface NoticeDialogListener {
@@ -30,13 +23,13 @@ public class DeleteExerciseDialogFragment extends DialogFragment {
         public void onDialogNegativeClick(DialogFragment dialog);
     }
 
-    DeleteExerciseDialogFragment.NoticeDialogListener listener;
+    DeleteSetDialogFragment.NoticeDialogListener listener;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            listener = (DeleteExerciseDialogFragment.NoticeDialogListener) context;
+            listener = (DeleteSetDialogFragment.NoticeDialogListener) context;
         }
         catch (ClassCastException e) {
             throw new ClassCastException(getActivity().toString() + "must implement NoticeListener");
@@ -49,11 +42,11 @@ public class DeleteExerciseDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
-        builder.setView(inflater.inflate(R.layout.dialog_delete_exercise, null))
+        builder.setView(inflater.inflate(R.layout.dialog_delete_set, null))
                 .setPositiveButton(R.string.delete, (dialog, id) ->
-                        listener.onDialogPositiveClick(DeleteExerciseDialogFragment.this))
+                        listener.onDialogPositiveClick(DeleteSetDialogFragment.this))
                 .setNegativeButton(R.string.cancel, (dialog, which) ->
-                        listener.onDialogNegativeClick(DeleteExerciseDialogFragment.this));
+                        listener.onDialogNegativeClick(DeleteSetDialogFragment.this));
 
         return builder.create();
     }

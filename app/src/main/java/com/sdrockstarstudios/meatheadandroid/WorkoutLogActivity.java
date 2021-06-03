@@ -11,10 +11,12 @@ import java.util.*;
 import static android.provider.Settings.System.DATE_FORMAT;
 
 public class WorkoutLogActivity extends AppCompatActivity
-        implements AddExerciseDialogFragment.NoticeDialogListener, DeleteExerciseDialogFragment.NoticeDialogListener{
+        implements AddExerciseDialogFragment.NoticeDialogListener, DeleteExerciseDialogFragment.NoticeDialogListener,
+        DeleteSetDialogFragment.NoticeDialogListener {
 
     Date currentDateTime;
-    LinearLayout addToSet;
+    LinearLayout viewToModify;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,11 @@ public class WorkoutLogActivity extends AppCompatActivity
     public void delete_exercise(View view){
         DialogFragment newFragment = new DeleteExerciseDialogFragment(view);
         newFragment.show(getSupportFragmentManager(), "deleteExercise");
+    }
+
+    public void deleteSet(int containerId, int idToRemove){
+        DialogFragment newFragment = new DeleteSetDialogFragment(containerId, idToRemove);
+        newFragment.show(getSupportFragmentManager(), "deleteSet");
     }
 
     public void addSet(boolean repsOnly){
@@ -64,26 +71,33 @@ public class WorkoutLogActivity extends AppCompatActivity
 
     private void handleAddSetDialogPositiveClick(DialogFragment dialog){
         addNewExerciseSetViewFromDialog(dialog);
-        addToSet = null;
+        viewToModify = null;
+    }
+
+    private void handleDeleteSetDialogPositiveClick(DialogFragment dialog){
+        int idOfContainer = ((DeleteSetDialogFragment) dialog).containerToRemoveFromId;
+        int idToRemove = ((DeleteSetDialogFragment) dialog).idToRemove;
+        LinearLayout container = findViewById(idOfContainer);
+        LinearLayout toRemove = findViewById(idToRemove);
+        container.removeView(toRemove);
     }
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
-        if(dialog instanceof DeleteExerciseDialogFragment){
+        if(dialog instanceof DeleteExerciseDialogFragment)
             handleDeleteExerciseDialogPositiveClick(dialog);
-        }
-        else if(dialog instanceof AddSetDialogFragment){
+        else if(dialog instanceof AddSetDialogFragment)
             handleAddSetDialogPositiveClick(dialog);
-        }
-        else {
+        else if(dialog instanceof DeleteSetDialogFragment)
+            handleDeleteSetDialogPositiveClick(dialog);
+        else
             handleAddExerciseDialogPositiveClick(dialog);
-        }
     }
 
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
         if(dialog instanceof AddSetDialogFragment){
-            addToSet = null;
+            viewToModify = null;
         }
     }
 
@@ -113,10 +127,11 @@ public class WorkoutLogActivity extends AppCompatActivity
 
         LinearLayout horScrollViewLinearLayout = new LinearLayout(this);
         horScrollViewLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        horScrollViewLinearLayout.setId(View.generateViewId());
 
         horScrollViewLinearLayout.addView(addSetButton);
         addSetButton.setOnClickListener(v -> {
-            addToSet = horScrollViewLinearLayout;
+            viewToModify = horScrollViewLinearLayout;
             addSet(repsOnly);
         });
 
@@ -137,6 +152,7 @@ public class WorkoutLogActivity extends AppCompatActivity
 
         LinearLayout setDataLayout = new LinearLayout(this);
         setDataLayout.setOrientation(LinearLayout.HORIZONTAL);
+        setDataLayout.setId(View.generateViewId());
 
         TextView multiplierTextView = new TextView(this);
         multiplierTextView.setTextSize(30);
@@ -154,10 +170,14 @@ public class WorkoutLogActivity extends AppCompatActivity
             weightTextView.setText(weightEditText.getText().toString());
             setDataLayout.addView(weightTextView);
         }
-
+        int idOfContainingView = viewToModify.getId();
+        setDataLayout.setOnLongClickListener(v -> {
+            deleteSet(idOfContainingView, setDataLayout.getId());
+            return false;
+        });
         setDataLayout.addView(multiplierTextView);
         setDataLayout.addView(repsTextView);
 
-        addToSet.addView(setDataLayout, addToSet.getChildCount() - 1);
+        viewToModify.addView(setDataLayout, viewToModify.getChildCount() - 1);
     }
 }
