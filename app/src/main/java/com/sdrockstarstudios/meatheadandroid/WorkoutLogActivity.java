@@ -81,7 +81,11 @@ public class WorkoutLogActivity extends AppCompatActivity
     }
 
     @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {}
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        if(dialog instanceof AddSetDialogFragment){
+            addToSet = null;
+        }
+    }
 
     private View buildNewWeightExerciseView(String exerciseName, boolean repsOnly, UUID exerciseId){
         TextView exerciseLabelTextView = new TextView(this);
