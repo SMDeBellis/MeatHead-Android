@@ -1,0 +1,23 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:id="@+id/addSetLinearLayout">
+    <LinearLayout android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/addSetHorLinearLayout"
+                  android:orientation="horizontal">
+        <EditText android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:id="@+id/weightEditText"
+                  android:inputType="number"
+                  android:hint="lbs"
+                  android:maxLength="3"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:text="X"/>
+        <EditText android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:id="@+id/repsEditText"
+                  android:inputType="number"
+                  android:hint="reps"
+                  android:maxLength="3"/>
+    </LinearLayout>
+</LinearLayout>
