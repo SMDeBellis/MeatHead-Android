@@ -13,14 +13,10 @@ Issues to fix:
  - when adding new set for an exercise focus for the whole workout view should focus at the end of the add button for the end of
    the row that the new set was added. Likewise when a new exercise is added.
 
-- Disable add weight/reps button until all data is filled in the last one. -- or have a AlarmDialog pop up to populate before adding.
-  Then they can be TextViews vs EditText. And the TextViews can call the AlarmDialog again to edit the view.
-- Disable Add exercise until all data of the last weight/rep is filled in.
+- Set TextViews can call the AlarmDialog again to edit the view? This would put it at the end? Maybe a new dialog? Or it can add a new member to carry location in view.
 - Format the weight/reps data so it doesn't all blend together
 - Format the exercise Name view so that it stands out.
 - Add workout date, start time, and end time. Date and start time will be instantiated on workoutLogActivity start and
   end time will be added at workout end (workout end button?)
 
 - data persistance... do we have a end workout button?
-
-- Use ids for exercise deletion instead of passing around the view.
