@@ -23,4 +23,4 @@ Issues to fix:
 
 - data persistance... do we have a end workout button?
 
-
+- Use ids for exercise deletion instead of passing around the view.
