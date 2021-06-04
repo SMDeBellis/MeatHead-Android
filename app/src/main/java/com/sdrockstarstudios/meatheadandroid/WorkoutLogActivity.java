@@ -33,8 +33,8 @@ public class WorkoutLogActivity extends AppCompatActivity
         newFragment.show(getSupportFragmentManager(), "addExercise");
     }
 
-    public void delete_exercise(View view){
-        DialogFragment newFragment = new DeleteExerciseDialogFragment(view);
+    public void delete_exercise(int idToDelete){
+        DialogFragment newFragment = new DeleteExerciseDialogFragment(idToDelete);
         newFragment.show(getSupportFragmentManager(), "deleteExercise");
     }
 
@@ -50,7 +50,9 @@ public class WorkoutLogActivity extends AppCompatActivity
 
     private void handleDeleteExerciseDialogPositiveClick(DialogFragment dialog){
         LinearLayout workoutContentLinearLayout = findViewById(R.id.WorkoutContentLinearLayout);
-        workoutContentLinearLayout.removeView(((DeleteExerciseDialogFragment) dialog).getViewToDelete());
+        int idToDelete = ((DeleteExerciseDialogFragment) dialog).getIdToDelete();
+        View viewToDelete = findViewById(idToDelete);
+        workoutContentLinearLayout.removeView(viewToDelete);
         Toast.makeText(getApplicationContext(), "Exercise Deleted", Toast.LENGTH_SHORT).show();
     }
 
@@ -119,11 +121,9 @@ public class WorkoutLogActivity extends AppCompatActivity
 
         Button addSetButton = new Button(this);
         addSetButton.setText("+");
-//        exerciseContainer.addView(addSetButton);
 
         // container for [LinearLayoutHor[weightxreps, add button]]
         HorizontalScrollView horScrollView = new HorizontalScrollView(this);
-//        horScrollView.addView(exerciseContainer);
         horScrollView.postDelayed(() -> horScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT), 110L);
 
         LinearLayout horScrollViewLinearLayout = new LinearLayout(this);
@@ -139,8 +139,9 @@ public class WorkoutLogActivity extends AppCompatActivity
         horScrollView.addView(horScrollViewLinearLayout);
 
         exerciseContainer.addView(horScrollView);
+        exerciseContainer.setId(View.generateViewId());
         exerciseLabelTextView.setOnLongClickListener(v -> {
-            delete_exercise(exerciseContainer);
+            delete_exercise(exerciseContainer.getId());
             return false;
         });
 

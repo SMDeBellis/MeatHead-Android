@@ -15,14 +15,14 @@ import androidx.fragment.app.DialogFragment;
 
 public class DeleteExerciseDialogFragment extends DialogFragment {
 
-    private View viewToDelete;
+    private final int idToDelete;
 
-    public View getViewToDelete() {
-        return viewToDelete;
+    public int getIdToDelete() {
+        return idToDelete;
     }
 
-    public DeleteExerciseDialogFragment(View view){
-        viewToDelete = view;
+    public DeleteExerciseDialogFragment(int idToDelete){
+        this.idToDelete = idToDelete;
     }
 
     public interface NoticeDialogListener {
