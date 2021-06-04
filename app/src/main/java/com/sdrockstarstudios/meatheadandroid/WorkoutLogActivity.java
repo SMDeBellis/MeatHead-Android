@@ -80,6 +80,7 @@ public class WorkoutLogActivity extends AppCompatActivity
         LinearLayout container = findViewById(idOfContainer);
         LinearLayout toRemove = findViewById(idToRemove);
         container.removeView(toRemove);
+        Toast.makeText(getApplicationContext(), "Set Deleted", Toast.LENGTH_SHORT).show();
     }
 
     @Override
