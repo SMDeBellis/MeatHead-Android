@@ -3,9 +3,10 @@ package com.sdrockstarstudios.meatheadandroid;
 
 import androidx.test.espresso.DataInteraction;
 import androidx.test.espresso.ViewInteraction;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.filters.LargeTest;
+import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner;
 import androidx.test.rule.ActivityTestRule;
-import androidx.test.runner.AndroidJUnit4;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,14 +36,14 @@ import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.is;
 
 @LargeTest
-@RunWith(AndroidJUnit4.class)
+@RunWith(AndroidJUnit4ClassRunner.class)
 public class WorkoutLogTest {
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityScenarioRule<MainActivity> mActivityTestRule = new ActivityScenarioRule<>(MainActivity.class);
 
     @Test
-    public void workoutLogTest() {
+    public void addSingleExerciseTest() {
         ViewInteraction materialButton = onView(
                 allOf(withId(R.id.button), withText("Add Exercise"),
                         childAtPosition(
@@ -98,6 +99,88 @@ public class WorkoutLogTest {
                         withParent(withParent(withId(R.id.WorkoutContentLinearLayout))),
                         isDisplayed()));
         textView.check(matches(withText("Bench Press")));
+    }
+
+    @Test
+    public void deleteOnlyExerciseTest() {
+        ViewInteraction materialButton = onView(
+                allOf(withId(R.id.button), withText("Add Exercise"),
+                        childAtPosition(
+                                allOf(withId(R.id.WorkoutLogMainLayout),
+                                        childAtPosition(
+                                                withId(android.R.id.content),
+                                                0)),
+                                2),
+                        isDisplayed()));
+        materialButton.perform(click());
+
+        ViewInteraction appCompatEditText = onView(
+                allOf(withId(R.id.exercise_name_entry),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(android.R.id.custom),
+                                        0),
+                                0),
+                        isDisplayed()));
+        appCompatEditText.perform(click());
+
+        ViewInteraction appCompatEditText2 = onView(
+                allOf(withId(R.id.exercise_name_entry),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(android.R.id.custom),
+                                        0),
+                                0),
+                        isDisplayed()));
+        appCompatEditText2.perform(replaceText("Bench Press"), closeSoftKeyboard());
+
+        ViewInteraction materialButton2 = onView(
+                allOf(withId(android.R.id.button1), withText("Add"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("android.widget.LinearLayout")),
+                                        0),
+                                2),
+                        isDisplayed()));
+        materialButton2.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(110);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction linearLayout = onView(
+                allOf(withParent(allOf(withId(R.id.WorkoutContentLinearLayout),
+                        withParent(withId(R.id.exerciseEntryScrollView)))),
+                        isDisplayed()));
+        linearLayout.check(matches(isDisplayed()));
+
+        ViewInteraction textView = onView(
+                allOf(withText("Bench Press"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.WorkoutContentLinearLayout),
+                                        0),
+                                0)));
+        textView.perform(scrollTo(), longClick());
+
+        ViewInteraction materialButton3 = onView(
+                allOf(withId(android.R.id.button1), withText("Delete"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("android.widget.LinearLayout")),
+                                        0),
+                                2),
+                        isDisplayed()));
+        materialButton3.perform(click());
+
+        ViewInteraction WorkoutContentLinearLayoutAfterDeletion = onView(withId(R.id.WorkoutContentLinearLayout));
+        WorkoutContentLinearLayoutAfterDeletion
+                .check(matches(hasChildCount(0)));
     }
 
     private static Matcher<View> childAtPosition(
