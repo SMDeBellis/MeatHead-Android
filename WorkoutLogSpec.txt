@@ -20,3 +20,4 @@ Issues to fix:
   end time will be added at workout end (workout end button?)
 
 - data persistance... do we have a end workout button?
+- add a main menu screen
