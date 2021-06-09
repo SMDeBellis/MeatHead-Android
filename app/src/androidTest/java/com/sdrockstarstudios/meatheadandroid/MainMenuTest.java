@@ -2,37 +2,33 @@ package com.sdrockstarstudios.meatheadandroid;
 
 import androidx.test.espresso.DataInteraction;
 import androidx.test.espresso.ViewInteraction;
+import androidx.test.espresso.intent.Intents;
+import androidx.test.espresso.intent.rule.IntentsTestRule;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import static androidx.test.espresso.intent.Intents.intended;
 import androidx.test.filters.LargeTest;
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner;
-import androidx.test.rule.ActivityTestRule;
 
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
-import static androidx.test.InstrumentationRegistry.getInstrumentation;
-import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.Espresso.pressBack;
-import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static androidx.test.espresso.action.ViewActions.*;
 import static androidx.test.espresso.assertion.ViewAssertions.*;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static androidx.test.espresso.matcher.ViewMatchers.*;
 
-import com.sdrockstarstudios.meatheadandroid.R;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.anything;
-import static org.hamcrest.Matchers.is;
 
 @LargeTest
 @RunWith(AndroidJUnit4ClassRunner.class)
@@ -40,31 +36,26 @@ public class MainMenuTest {
     @Rule
     public ActivityScenarioRule<MainMenuActivity> mActivityTestRule = new ActivityScenarioRule<>(MainMenuActivity.class);
 
+    @Rule
+    public IntentsTestRule<MainMenuActivity> mMainMenuActivityIntentsTestRule = new IntentsTestRule<>(MainMenuActivity.class);
+
     @Test
     public void mainMenuScreenHasAWorkoutsButton(){
-        ViewInteraction workoutsButton = onView(
-                allOf(withId(R.id.button), withText("Workouts"),
-                        childAtPosition(
-                                allOf(withId(R.id.MainMenuLayout),
-                                        childAtPosition(
-                                                withId(android.R.id.content),
-                                                0)),
-                                1),
-                        isDisplayed()));
+        ViewInteraction workoutsButton = onView(allOf(withText("Workouts"), isDisplayed()));
         workoutsButton.check(matches(isDisplayed()));
     }
 
     @Test
+    public void workoutsButtonLaunchesWorkoutLogActivityIntent(){
+        ViewInteraction workoutsButton = onView(allOf(withText("Workouts"), isDisplayed()));
+        workoutsButton.perform(click());
+
+        intended(hasComponent(WorkoutLogActivity.class.getName()));
+    }
+
+    @Test
     public void mainMenuScreenHasAStatsButton(){
-        ViewInteraction statsButton = onView(
-                allOf(withId(R.id.button), withText("Stats"),
-                        childAtPosition(
-                                allOf(withId(R.id.MainMenuLayout),
-                                        childAtPosition(
-                                                withId(android.R.id.content),
-                                                0)),
-                                1),
-                        isDisplayed()));
+        ViewInteraction statsButton = onView(allOf(withText("Statistics"), isDisplayed()));
         statsButton.check(matches(isDisplayed()));
     }
 
