@@ -20,4 +20,6 @@ Issues to fix:
   end time will be added at workout end (workout end button?)
 
 - data persistance... do we have a end workout button?
+- data sync service to sync data to central database on wifi connection.
+
 - add a main menu screen
