@@ -11,11 +11,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        launchWorkoutLogActivity(null);
+        launchMainMenuActivity(null);
     }
 
-    public void launchWorkoutLogActivity(View view){
-        Intent intent = new Intent(this, WorkoutLogActivity.class);
+    public void launchMainMenuActivity(View view){
+        Intent intent = new Intent(this, MainMenuActivity.class);
         startActivity(intent);
     }
 }

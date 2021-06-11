@@ -7,4 +7,5 @@
     <string name="add_exercise_dialog_accept">Add</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+    <string name="meatheadBanner">MeatHead</string>
 </resources>
