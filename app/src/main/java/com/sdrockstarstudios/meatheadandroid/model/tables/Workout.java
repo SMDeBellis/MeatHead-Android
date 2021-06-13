@@ -1,4 +1,4 @@
-package com.sdrockstarstudios.meatheadandroid.model;
+package com.sdrockstarstudios.meatheadandroid.model.tables;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -9,8 +9,8 @@ import com.sdrockstarstudios.meatheadandroid.model.converters.DateConverter;
 
 import java.util.Date;
 
-@Entity(tableName = "workouts")
-public class Workouts {
+@Entity(tableName = "workout")
+public class Workout {
     @PrimaryKey
     public String workoutUUID;
 
