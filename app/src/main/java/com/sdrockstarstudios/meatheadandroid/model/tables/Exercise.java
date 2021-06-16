@@ -1,11 +1,12 @@
 package com.sdrockstarstudios.meatheadandroid.model.tables;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "exercises",
+@Entity(tableName = "exercise",
     foreignKeys = {
         @ForeignKey(
                 entity = Workout.class,
@@ -17,6 +18,8 @@ import androidx.room.PrimaryKey;
 )
 public class Exercise {
     @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "exerciseUUID")
     public String exerciseUUID;
 
     @ColumnInfo(name = "exerciseName")

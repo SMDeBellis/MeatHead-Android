@@ -1,5 +1,6 @@
 package com.sdrockstarstudios.meatheadandroid.model.tables;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -16,8 +17,19 @@ import androidx.room.PrimaryKey;
     }
 )
 public class Sets {
+
+//    public Sets(int index, String parentExerciseUUID, int weight, int reps, boolean repsOnly){
+//        this.index = index;
+//        this.parentExerciseUUID = parentExerciseUUID;
+//        this.weight = weight;
+//        this.reps = reps;
+//        this.repsOnly = repsOnly;
+//    }
+
     @PrimaryKey
-    public int index;
+    @NonNull
+    @ColumnInfo(name = "index")
+    public Integer index;
 
     @ColumnInfo(name = "parentExerciseUUID")
     public String parentExerciseUUID;

@@ -1,5 +1,6 @@
 package com.sdrockstarstudios.meatheadandroid.model.tables;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -12,6 +13,8 @@ import java.util.Date;
 @Entity(tableName = "workout")
 public class Workout {
     @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "workoutUUID")
     public String workoutUUID;
 
     @ColumnInfo(name = "startDate")
@@ -19,6 +22,7 @@ public class Workout {
     public Date startDate;
 
     @ColumnInfo(name = "endDate")
+    @TypeConverters(DateConverter.class)
     public Date endDate;
 
     @ColumnInfo(name = "workoutName", defaultValue = "")

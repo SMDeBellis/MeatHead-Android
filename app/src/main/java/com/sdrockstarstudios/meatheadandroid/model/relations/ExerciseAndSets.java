@@ -10,12 +10,11 @@ import java.util.List;
 
 public class ExerciseAndSets {
     @Embedded
-    List<Exercise> exerciseList = null;
+    public Exercise exercise = null;
 
     @Relation(
             parentColumn = "exerciseUUID",
-            entityColumn = "parentExerciseUUID",
-            entity = Sets.class
+            entityColumn = "parentExerciseUUID"
     )
-    List<Sets> setList = null;
+    public List<Sets> setList = null;
 }

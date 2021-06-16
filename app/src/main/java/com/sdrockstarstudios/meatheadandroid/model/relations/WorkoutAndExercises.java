@@ -10,12 +10,12 @@ import java.util.List;
 
 public class WorkoutAndExercises {
     @Embedded
-    Workout workout = null;
+    public Workout workout = null;
 
     @Relation(
             parentColumn = "workoutUUID",
             entityColumn = "parentWorkoutUUID",
             entity = Exercise.class
     )
-    List<ExerciseAndSets> exercisesAndSets = null;
+    public List<ExerciseAndSets> exercisesAndSets = null;
 }
