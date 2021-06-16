@@ -17,7 +17,7 @@ import io.reactivex.Single;
 @Dao
 public interface WorkoutDao {
     @Transaction
-    @Query("SELECT * FROM workout WHERE workoutUUID = :uuid")
+    @Query("SELECT * FROM workout WHERE workoutUUID = (:uuid)")
     Single<WorkoutAndExercises> getWorkout(String uuid);
 
     @Query("SELECT DISTINCT exerciseName FROM exercise")

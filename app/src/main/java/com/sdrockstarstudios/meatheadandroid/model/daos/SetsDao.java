@@ -18,7 +18,7 @@ public interface SetsDao {
     Single<List<Sets>> getAll();
 
     @Query("SELECT * FROM sets WHERE parentExerciseUUID IN (:uuid)")
-    List<Sets> loadAllByParentExerciseUUID(String uuid);
+    Single<List<Sets>> getAllByParentExerciseUUID(String uuid);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable insert(Sets set);
