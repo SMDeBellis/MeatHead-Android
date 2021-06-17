@@ -51,8 +51,8 @@ public class SetsDoaTest {
     @Test
     public void insertAndGetSet(){
         Workout workout = WorkoutFactory.workoutBuilder("testUUID", "My Awesome workout");
-        Exercise exercise = WorkoutFactory.exerciseBuilder("testUUID", "My Awesome exercise.","testUUID");
-        Sets toInsert = WorkoutFactory.setBuilder(5, "testUUID", 20, 5, false);
+        Exercise exercise = WorkoutFactory.exerciseBuilder("testExerciseUUID", "My Awesome exercise.","testUUID");
+        Sets toInsert = WorkoutFactory.setBuilder(5, "testExerciseUUID", 20, 5, false);
 
         mDatabase.workoutDao().insert(workout).blockingAwait();
         mDatabase.exerciseDoa().insert(exercise).blockingAwait();
