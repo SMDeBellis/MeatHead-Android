@@ -144,5 +144,10 @@ public class SetsDoaTest {
                 });
     }
 
+    @Test
+    public void insertFailsWhenParentExerciseUUIDAndIndexPairAreNotUnique(){
+
+    }
+
 
 }

@@ -4,9 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "sets",
+    indices = {
+        @Index(value = {"parentExerciseUUID", "index"}, unique = true)
+    },
     foreignKeys = {
         @ForeignKey(
                 entity = Exercise.class,
@@ -26,7 +30,9 @@ public class Sets {
 //        this.repsOnly = repsOnly;
 //    }
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    public Integer id;
+
     @NonNull
     @ColumnInfo(name = "index")
     public Integer index;
