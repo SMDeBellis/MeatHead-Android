@@ -9,14 +9,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MeatHeadAndroid">
-        <activity
-            android:name=".WorkoutLogActivity"
+        <activity android:name=".WorkoutLogMenuActivity"
             android:parentActivityName=".MainMenuActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainMenuActivity" />
+                android:value=".MainMenuActivity" />></activity>
+        <activity
+            android:name=".WorkoutLogActivity"
+            android:parentActivityName=".WorkoutLogMenuActivity">
+
+            <!-- The meta-data tag is required if you support API level 15 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".WorkoutLogMenuActivity" />
         </activity>
         <activity
             android:name=".MainMenuActivity"

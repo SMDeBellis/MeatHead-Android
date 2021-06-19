@@ -49,7 +49,7 @@ public class AddSetDialogFragment extends DialogFragment {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         builder.setView(inflater.inflate(R.layout.dialog_add_set, null))
-                .setPositiveButton(R.string.add_exercise_dialog_accept, (dialog, id) ->
+                .setPositiveButton(R.string.add_dialog_accept, (dialog, id) ->
                         listener.onDialogPositiveClick(AddSetDialogFragment.this))
                 .setNegativeButton(R.string.cancel, (dialog, which) ->
                         listener.onDialogNegativeClick(AddSetDialogFragment.this));

@@ -14,6 +14,9 @@ public class WorkoutLogActivity extends AppCompatActivity
         implements AddExerciseDialogFragment.NoticeDialogListener, DeleteExerciseDialogFragment.NoticeDialogListener,
         DeleteSetDialogFragment.NoticeDialogListener {
 
+    public static final String WORKOUT_NAME_KEY = "workout-name-key";
+    public static final String WORKOUT_UUID_KEY = "workout-uuid-key";
+
     Date currentDateTime;
     LinearLayout viewToModify;
 

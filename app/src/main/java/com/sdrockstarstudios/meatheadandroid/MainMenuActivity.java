@@ -15,7 +15,7 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     public void pressWorkoutsButton(View view){
-        Intent workoutLogIntent = new Intent(this, WorkoutLogActivity.class);
+        Intent workoutLogIntent = new Intent(this, WorkoutLogMenuActivity.class);
         startActivity(workoutLogIntent);
     }
 }

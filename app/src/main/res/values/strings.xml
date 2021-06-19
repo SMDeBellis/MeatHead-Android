@@ -4,7 +4,8 @@
     <string name="workout_log_header">Workout Log</string>
     <string name="add_exercise_button_text">Add Exercise</string>
     <string name="exercise_name">Exercise Name</string>
-    <string name="add_exercise_dialog_accept">Add</string>
+    <string name="workout_name">Workout Name</string>
+    <string name="add_dialog_accept">Add</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="meatheadBanner">MeatHead</string>
