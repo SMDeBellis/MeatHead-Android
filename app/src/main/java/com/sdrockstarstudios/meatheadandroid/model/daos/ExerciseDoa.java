@@ -12,13 +12,19 @@ import com.sdrockstarstudios.meatheadandroid.model.tables.Exercise;
 import java.util.List;
 
 import io.reactivex.Completable;
+import io.reactivex.Single;
 
 @Dao
 public interface ExerciseDoa {
 
     @Transaction
     @Query("SELECT * FROM exercise")
-    public List<ExerciseAndSets> getExerciseAndSets();
+    List<ExerciseAndSets> getAllExerciseAndSets();
+
+    @Transaction
+    @Query("Select * FROM exercise WHERE LOWER(exerciseName) = LOWER(:exerciseName)")
+    Single<List<ExerciseAndSets>> getExerciseAndSetsByExerciseName(String exerciseName);
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable insert(Exercise exercise);
