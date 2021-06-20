@@ -16,6 +16,7 @@ public class WorkoutLogActivity extends AppCompatActivity
 
     public static final String WORKOUT_NAME_KEY = "workout-name-key";
     public static final String WORKOUT_UUID_KEY = "workout-uuid-key";
+    public static final String WORKOUT_START_DATE_KEY = "workout-start-date-key";
 
     Date currentDateTime;
     LinearLayout viewToModify;

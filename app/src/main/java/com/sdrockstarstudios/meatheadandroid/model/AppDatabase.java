@@ -19,21 +19,21 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract ExerciseDoa exerciseDoa();
     public abstract SetsDao setsDao();
 
-    volatile private AppDatabase instance = null;
+    volatile static private AppDatabase instance = null;
 
-    AppDatabase getInstance(Context context){
+    public static AppDatabase getInstance(Context context){
         if(instance != null){
             return instance;
         }
         else{
-            synchronized (this){
+            synchronized (AppDatabase.class){
                 instance = buildDatabase(context);
                 return instance;
             }
         }
     }
 
-    private AppDatabase buildDatabase(Context context){
+    private static AppDatabase buildDatabase(Context context){
         return Room.databaseBuilder(context, AppDatabase.class, "MeatHeadAndroid-db")
                 .enableMultiInstanceInvalidation()
                 .build();
