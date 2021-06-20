@@ -46,11 +46,11 @@ public class MainMenuTest {
     }
 
     @Test
-    public void workoutsButtonLaunchesWorkoutLogActivityIntent(){
+    public void workoutsButtonLaunchesWorkoutLogMenuActivityIntent(){
         ViewInteraction workoutsButton = onView(allOf(withText("Workouts"), isDisplayed()));
         workoutsButton.perform(click());
 
-        intended(hasComponent(WorkoutLogActivity.class.getName()));
+        intended(hasComponent(WorkoutLogMenuActivity.class.getName()));
     }
 
     @Test
