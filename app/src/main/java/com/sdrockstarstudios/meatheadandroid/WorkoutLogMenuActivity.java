@@ -8,6 +8,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
+import com.sdrockstarstudios.meatheadandroid.model.AppDatabase;
+import com.sdrockstarstudios.meatheadandroid.model.tables.Workout;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.UUID;
 
 public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWorkoutDialogFragment.NoticeDialogListener {
@@ -28,12 +35,18 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
         EditText workoutNameEditText = dialog.getDialog().findViewById(R.id.workout_name_entry);
         String workoutName = workoutNameEditText.getText().toString();
         String uuid = UUID.randomUUID().toString();
-        // create new workout uuid
+
         // insert workout into database
+        Workout workout = new Workout();
+        workout.startDate = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()).getTime();
+        workout.workoutUUID = uuid;
+        workout.workoutName = workoutName;
+        AppDatabase.getInstance(getApplicationContext()).workoutDao().insert(workout);
 
         Intent intent = new Intent(this, WorkoutLogActivity.class);
         intent.putExtra(WorkoutLogActivity.WORKOUT_NAME_KEY, workoutName);
         intent.putExtra(WorkoutLogActivity.WORKOUT_UUID_KEY, uuid);
+        intent.putExtra(WorkoutLogActivity.WORKOUT_START_DATE_KEY, workout.startDate.getTime());
         startActivity(intent);
     }
 
