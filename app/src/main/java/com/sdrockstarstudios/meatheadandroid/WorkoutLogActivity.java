@@ -1,5 +1,6 @@
 package com.sdrockstarstudios.meatheadandroid;
 
+import android.content.Intent;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.*;
@@ -18,7 +19,9 @@ public class WorkoutLogActivity extends AppCompatActivity
     public static final String WORKOUT_UUID_KEY = "workout-uuid-key";
     public static final String WORKOUT_START_DATE_KEY = "workout-start-date-key";
 
-    Date currentDateTime;
+    Date startDate;
+    String workoutUUID;
+    String workoutName;
     LinearLayout viewToModify;
 
 
@@ -27,8 +30,11 @@ public class WorkoutLogActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout_log);
         TextView workoutDateTextView = findViewById(R.id.dateTextView);
-        currentDateTime = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()).getTime();
-        String date = DateFormat.getDateFormat(this).format(currentDateTime);
+        Intent intent = getIntent();
+        workoutUUID = intent.getStringExtra(WORKOUT_UUID_KEY);
+        workoutName = intent.getStringExtra(WORKOUT_NAME_KEY);
+        startDate = new Date(intent.getLongExtra(WORKOUT_START_DATE_KEY, -1));
+        String date = DateFormat.getDateFormat(this).format(startDate);
         workoutDateTextView.setText(date);
     }
 
