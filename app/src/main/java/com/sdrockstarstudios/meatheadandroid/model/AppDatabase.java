@@ -1,6 +1,7 @@
 package com.sdrockstarstudios.meatheadandroid.model;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.room.Database;
 import androidx.room.Room;
@@ -22,11 +23,13 @@ public abstract class AppDatabase extends RoomDatabase {
     volatile static private AppDatabase instance = null;
 
     public static AppDatabase getInstance(Context context){
+        Log.i("AppDatabase++++++", "Calling getInstance for DB");
         if(instance != null){
             return instance;
         }
         else{
             synchronized (AppDatabase.class){
+                Log.i("AppDatabase++++++", "building database.");
                 instance = buildDatabase(context);
                 return instance;
             }
@@ -34,7 +37,7 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     private static AppDatabase buildDatabase(Context context){
-        return Room.databaseBuilder(context, AppDatabase.class, "MeatHeadAndroid-db")
+        return Room.databaseBuilder(context, AppDatabase.class, "meathead.db")
                 .enableMultiInstanceInvalidation()
                 .build();
     }

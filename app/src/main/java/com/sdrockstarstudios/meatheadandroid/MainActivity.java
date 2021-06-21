@@ -5,6 +5,8 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.sdrockstarstudios.meatheadandroid.model.AppDatabase;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
