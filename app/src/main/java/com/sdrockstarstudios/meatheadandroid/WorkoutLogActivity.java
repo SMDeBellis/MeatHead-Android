@@ -12,6 +12,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.sdrockstarstudios.meatheadandroid.model.AppDatabase;
 import com.sdrockstarstudios.meatheadandroid.model.tables.Exercise;
+import com.sdrockstarstudios.meatheadandroid.model.tables.Sets;
 
 import java.util.*;
 
@@ -85,7 +86,7 @@ public class WorkoutLogActivity extends AppCompatActivity
 
         View newExercise = buildNewWeightExerciseView(exerciseName, repsOnly);
         Log.i("ID CHECK", String.valueOf(newExercise.getId()));
-        newExercise.setTag(UUID.randomUUID());
+
         LinearLayout exerciseLayout = findViewById(R.id.WorkoutContentLinearLayout);
         exerciseLayout.addView(newExercise);
         ScrollView exerciseScrollView = findViewById(R.id.exerciseEntryScrollView);
@@ -162,6 +163,9 @@ public class WorkoutLogActivity extends AppCompatActivity
         LinearLayout horScrollViewLinearLayout = new LinearLayout(this);
         horScrollViewLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
         horScrollViewLinearLayout.setId(View.generateViewId());
+        UUID exerciseUUID = UUID.randomUUID();
+        horScrollViewLinearLayout.setTag(exerciseUUID);
+        Log.i("TAGGING++++", "Adding Tag: " + horScrollViewLinearLayout.getTag() + " to Exercise: " + exerciseName);
 
         horScrollViewLinearLayout.addView(addSetButton);
         addSetButton.setOnClickListener(v -> {
@@ -171,6 +175,7 @@ public class WorkoutLogActivity extends AppCompatActivity
 
         horScrollView.addView(horScrollViewLinearLayout);
 
+        exerciseContainer.setTag(exerciseUUID);
         exerciseContainer.addView(horScrollView);
         exerciseContainer.setId(View.generateViewId());
         exerciseLabelTextView.setOnLongClickListener(v -> {
@@ -198,10 +203,15 @@ public class WorkoutLogActivity extends AppCompatActivity
         EditText repsEditText = dialog.getDialog().findViewById(R.id.repsEditText);
         repsTextView.setText(repsEditText.getText().toString());
 
+
+        Sets set = new Sets();
+        set.reps = Integer.parseInt(repsEditText.getText().toString());
+
         if(!repsOnly){
             TextView weightTextView = new TextView(this);
             weightTextView.setTextSize(30);
             EditText weightEditText = dialog.getDialog().findViewById(R.id.weightEditText);
+            set.weight = Integer.parseInt(weightEditText.getText().toString());
             weightTextView.setText(weightEditText.getText().toString());
             setDataLayout.addView(weightTextView);
         }
@@ -212,7 +222,18 @@ public class WorkoutLogActivity extends AppCompatActivity
         });
         setDataLayout.addView(multiplierTextView);
         setDataLayout.addView(repsTextView);
+        int setIndex = viewToModify.getChildCount() - 1;
+        viewToModify.addView(setDataLayout, setIndex);
+        Log.i("GETTING TAG", "getting tag from viewToModify tag: " + viewToModify.getTag().toString());
 
-        viewToModify.addView(setDataLayout, viewToModify.getChildCount() - 1);
+        set.parentExerciseUUID = viewToModify.getTag().toString();
+        set.index = setIndex;
+        set.repsOnly = repsOnly;
+
+        AppDatabase.getInstance(getApplicationContext()).setsDao().insert(set)
+                .subscribeOn(Schedulers.io())
+                .doOnError(error -> Toast.makeText(getApplicationContext(), "Error adding set to exercise.", Toast.LENGTH_SHORT))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
     }
 }
