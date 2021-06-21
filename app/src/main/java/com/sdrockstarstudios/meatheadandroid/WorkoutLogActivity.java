@@ -2,12 +2,22 @@ package com.sdrockstarstudios.meatheadandroid;
 
 import android.content.Intent;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.fragment.app.DialogFragment;
+
+
+import com.sdrockstarstudios.meatheadandroid.model.AppDatabase;
+import com.sdrockstarstudios.meatheadandroid.model.tables.Exercise;
+
 import java.util.*;
+
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 import static android.provider.Settings.System.DATE_FORMAT;
 
@@ -73,12 +83,25 @@ public class WorkoutLogActivity extends AppCompatActivity
         Checkable repsOnlyCheckbox = dialog.getDialog().findViewById(R.id.reps_only_checkbox);
         boolean repsOnly = repsOnlyCheckbox.isChecked();
 
-        View newExercise = buildNewWeightExerciseView(exerciseName, repsOnly, UUID.randomUUID());
+        View newExercise = buildNewWeightExerciseView(exerciseName, repsOnly);
+        Log.i("ID CHECK", String.valueOf(newExercise.getId()));
+        newExercise.setTag(UUID.randomUUID());
         LinearLayout exerciseLayout = findViewById(R.id.WorkoutContentLinearLayout);
         exerciseLayout.addView(newExercise);
         ScrollView exerciseScrollView = findViewById(R.id.exerciseEntryScrollView);
         exerciseScrollView.postDelayed(() -> exerciseScrollView.fullScroll(ScrollView.FOCUS_DOWN), 100L);
         exerciseScrollView.fullScroll(ScrollView.FOCUS_AFTER_DESCENDANTS);
+
+        //add exercise to DB
+        Exercise exercise = new Exercise();
+        exercise.exerciseName = exerciseName;
+        exercise.exerciseUUID = newExercise.getTag().toString();
+        exercise.parentWorkoutUUID = workoutUUID;
+        AppDatabase.getInstance(getApplicationContext()).exerciseDoa().insert(exercise)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError(error -> Toast.makeText(getApplicationContext(), "Error inserting exercise: " + exerciseName + " in database.", Toast.LENGTH_SHORT))
+                .subscribe();
     }
 
     private void handleAddSetDialogPositiveClick(DialogFragment dialog){
@@ -114,7 +137,7 @@ public class WorkoutLogActivity extends AppCompatActivity
         }
     }
 
-    private View buildNewWeightExerciseView(String exerciseName, boolean repsOnly, UUID exerciseId){
+    private View buildNewWeightExerciseView(String exerciseName, boolean repsOnly){
         TextView exerciseLabelTextView = new TextView(this);
         exerciseLabelTextView.setText(exerciseName);
         exerciseLabelTextView.setTextSize(25);
