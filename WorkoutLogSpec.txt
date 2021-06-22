@@ -21,9 +21,7 @@ Issues to fix:
 
 - data persistance... do we have a end workout button?
     - need to add delete for workouts also?
-    - need to delete a set from the database when the sets view is deleted.
-    - need to delete the exercise and all sets when the exercise view is deleted.
 
-
+- handle Disposable objects
 
 - data sync service to sync data to central database on wifi connection.

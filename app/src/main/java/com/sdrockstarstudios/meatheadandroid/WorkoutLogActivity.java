@@ -32,6 +32,8 @@ public class WorkoutLogActivity extends AppCompatActivity
     public static final String WORKOUT_UUID_KEY = "workout-uuid-key";
     public static final String WORKOUT_START_DATE_KEY = "workout-start-date-key";
 
+    public static final String EXERCISE_NAME_TEXT_VIEW_TAG = "exercise-name-text-view_key";
+
     Date startDate;
     String workoutUUID;
     String workoutName;
@@ -75,8 +77,20 @@ public class WorkoutLogActivity extends AppCompatActivity
         LinearLayout workoutContentLinearLayout = findViewById(R.id.WorkoutContentLinearLayout);
         int idToDelete = ((DeleteExerciseDialogFragment) dialog).getIdToDelete();
         View viewToDelete = findViewById(idToDelete);
-        workoutContentLinearLayout.removeView(viewToDelete);
-        Toast.makeText(getApplicationContext(), "Exercise Deleted", Toast.LENGTH_SHORT).show();
+
+        Exercise exercise = new Exercise();
+        exercise.parentWorkoutUUID = workoutUUID;
+        exercise.exerciseUUID = viewToDelete.getTag().toString();
+        exercise.exerciseName = ((TextView) viewToDelete.findViewWithTag(EXERCISE_NAME_TEXT_VIEW_TAG)).getText().toString();
+
+        Disposable d = AppDatabase.getInstance(getApplicationContext()).exerciseDoa().delete(exercise)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError(error -> Toast.makeText(getApplicationContext(), "Error deleting exercise from database.", Toast.LENGTH_SHORT))
+                .subscribe(() -> {
+                    workoutContentLinearLayout.removeView(viewToDelete);
+                    Toast.makeText(getApplicationContext(), "Exercise Deleted", Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void handleAddExerciseDialogPositiveClick(@NonNull DialogFragment dialog){
@@ -168,6 +182,7 @@ public class WorkoutLogActivity extends AppCompatActivity
     @NonNull
     private View buildNewWeightExerciseView(String exerciseName, boolean repsOnly){
         TextView exerciseLabelTextView = new TextView(this);
+        exerciseLabelTextView.setTag(EXERCISE_NAME_TEXT_VIEW_TAG);
         exerciseLabelTextView.setText(exerciseName);
         exerciseLabelTextView.setTextSize(25);
         exerciseLabelTextView.setPadding(exerciseLabelTextView.getPaddingLeft(),
@@ -193,7 +208,6 @@ public class WorkoutLogActivity extends AppCompatActivity
         horScrollViewLinearLayout.setId(View.generateViewId());
         UUID exerciseUUID = UUID.randomUUID();
         horScrollViewLinearLayout.setTag(exerciseUUID);
-        Log.i("TAGGING++++", "Adding Tag: " + horScrollViewLinearLayout.getTag() + " to Exercise: " + exerciseName);
 
         horScrollViewLinearLayout.addView(addSetButton);
         addSetButton.setOnClickListener(v -> {
@@ -252,7 +266,6 @@ public class WorkoutLogActivity extends AppCompatActivity
         setDataLayout.addView(repsTextView);
         int setIndex = viewToModify.getChildCount() - 1;
         viewToModify.addView(setDataLayout, setIndex);
-        Log.i("GETTING TAG", "getting tag from viewToModify tag: " + viewToModify.getTag().toString());
 
         set.parentExerciseUUID = viewToModify.getTag().toString();
         set.index = setIndex;
