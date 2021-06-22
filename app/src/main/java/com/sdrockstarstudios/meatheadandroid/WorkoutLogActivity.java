@@ -18,6 +18,8 @@ import java.util.*;
 
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import static android.provider.Settings.System.DATE_FORMAT;
@@ -77,7 +79,7 @@ public class WorkoutLogActivity extends AppCompatActivity
         Toast.makeText(getApplicationContext(), "Exercise Deleted", Toast.LENGTH_SHORT).show();
     }
 
-    private void handleAddExerciseDialogPositiveClick(DialogFragment dialog){
+    private void handleAddExerciseDialogPositiveClick(@NonNull DialogFragment dialog){
         EditText exerciseNameEditText = dialog.getDialog().findViewById(R.id.exercise_name_entry);
         String exerciseName = exerciseNameEditText.getText().toString();
 
@@ -115,8 +117,33 @@ public class WorkoutLogActivity extends AppCompatActivity
         int idToRemove = ((DeleteSetDialogFragment) dialog).idToRemove;
         LinearLayout container = findViewById(idOfContainer);
         LinearLayout toRemove = findViewById(idToRemove);
-        container.removeView(toRemove);
-        Toast.makeText(getApplicationContext(), "Set Deleted", Toast.LENGTH_SHORT).show();
+        Sets toRemoveFromDatabase = createSetToRemove(toRemove, container.getTag().toString(), container.indexOfChild(toRemove));
+        Disposable d = AppDatabase.getInstance(getApplicationContext()).setsDao().delete(toRemoveFromDatabase)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError(error -> Toast.makeText(getApplicationContext(), "Error deleting set from database.", Toast.LENGTH_SHORT))
+                .subscribe(() -> {
+                    container.removeView(toRemove);
+                    Toast.makeText(getApplicationContext(), "Set Deleted", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    @NonNull
+    private Sets createSetToRemove(@NonNull LinearLayout view, String parentUUID, int index){
+        Sets set = new Sets();
+        set.index = index;
+        set.parentExerciseUUID = parentUUID;
+
+        int childCount = view.getChildCount();
+        set.reps = Integer.parseInt(((TextView) view.getChildAt(childCount - 1)).getText().toString());
+        if(childCount == 3){
+            set.weight = Integer.parseInt(((TextView) view.getChildAt(0)).getText().toString());
+            set.repsOnly = false;
+        }
+        else{
+            set.repsOnly = true;
+        }
+        return set;
     }
 
     @Override
@@ -138,6 +165,7 @@ public class WorkoutLogActivity extends AppCompatActivity
         }
     }
 
+    @NonNull
     private View buildNewWeightExerciseView(String exerciseName, boolean repsOnly){
         TextView exerciseLabelTextView = new TextView(this);
         exerciseLabelTextView.setText(exerciseName);
@@ -186,7 +214,7 @@ public class WorkoutLogActivity extends AppCompatActivity
         return exerciseContainer;
     }
 
-    private void addNewExerciseSetViewFromDialog(DialogFragment dialog){
+    private void addNewExerciseSetViewFromDialog(@NonNull DialogFragment dialog){
 
         boolean repsOnly = ((AddSetDialogFragment) dialog).repsOnly;
 
