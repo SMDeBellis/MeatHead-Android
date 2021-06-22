@@ -20,9 +20,8 @@ Issues to fix:
   end time will be added at workout end (workout end button?)
 
 - data persistance... do we have a end workout button?
-    - need to add delete methods to doas for removal when user removes sets and exercises. Maybe workouts also?
+    - need to add delete for workouts also?
 
-
-
+- handle Disposable objects
 
 - data sync service to sync data to central database on wifi connection.
