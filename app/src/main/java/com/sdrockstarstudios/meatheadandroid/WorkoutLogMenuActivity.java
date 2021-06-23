@@ -5,6 +5,7 @@ import androidx.fragment.app.DialogFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -15,7 +16,10 @@ import com.sdrockstarstudios.meatheadandroid.model.tables.Workout;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -28,6 +32,7 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout_log_menu);
+        //determine if previous workouts exist and if not grey out load workouts button.
     }
 
     public void pressNewWorkoutButton(View view){
@@ -35,7 +40,7 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
         newFragment.show(getSupportFragmentManager(), "addWorkout");
     }
 
-    @Override
+    @Override // needs to handle the LoadWorkoutDialogFragment
     public void onDialogPositiveClick(DialogFragment dialog) {
         EditText workoutNameEditText = dialog.getDialog().findViewById(R.id.workout_name_entry);
         String workoutName = workoutNameEditText.getText().toString();
@@ -61,4 +66,17 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
 
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {}
+
+    private Map<String, Workout> createLabelToWorkoutMapping(List<Workout> workouts){
+        HashMap<String, Workout> workoutMapping = new HashMap<>();
+        for(Workout workout: workouts){
+            String date = DateFormat.getDateFormat(this).format(workout.startDate);
+            String label = workout.workoutName + " " + date;
+            if(workout.endDate == null){
+                label = "* " + label;
+            }
+            workoutMapping.put(label, workout);
+        }
+        return workoutMapping;
+    }
 }
