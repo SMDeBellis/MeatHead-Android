@@ -52,8 +52,6 @@ public class WorkoutLogMenuActivity extends AppCompatActivity
                 })
                 .doOnError(error -> loadWorkoutButton.setEnabled(false))
                 .subscribe();
-
-        //determine if previous workouts exist and if not grey out load workouts button.
     }
 
     public void pressNewWorkoutButton(View view){
