@@ -16,6 +16,9 @@ import io.reactivex.Single;
 
 @Dao
 public interface WorkoutDao {
+    @Query("SELECT * FROM workout")
+    Single<List<Workout>> getAllWorkouts();
+
     @Transaction
     @Query("SELECT * FROM workout WHERE workoutUUID = (:uuid)")
     Single<WorkoutAndExercises> getWorkout(String uuid);
