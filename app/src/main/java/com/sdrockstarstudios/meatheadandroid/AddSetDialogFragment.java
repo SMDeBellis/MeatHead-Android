@@ -56,13 +56,14 @@ public class AddSetDialogFragment extends DialogFragment {
 
         AlertDialog dialog = builder.create();
 
-        if(repsOnly){
-            EditText weightTextEdit = dialog.findViewById(R.id.weightEditText);
-            LinearLayout addSetHorLinearLayout = dialog.findViewById(R.id.addSetHorLinearLayout);
-            addSetHorLinearLayout.removeView(weightTextEdit);
-        }
-
         dialog.setOnShowListener(dialogInterface -> {
+            if(repsOnly){
+                EditText weightTextEdit = dialog.findViewById(R.id.weightEditText);
+                LinearLayout addSetHorLinearLayout = dialog.findViewById(R.id.addSetHorLinearLayout);
+                addSetHorLinearLayout.removeView(weightTextEdit);
+                //fix margin of X after removal.
+            }
+
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
             EditText repsEditText = dialog.findViewById(R.id.repsEditText);
             repsEditText.addTextChangedListener(new TextWatcher() {

@@ -11,6 +11,7 @@ import androidx.fragment.app.DialogFragment;
 
 
 import com.sdrockstarstudios.meatheadandroid.model.AppDatabase;
+import com.sdrockstarstudios.meatheadandroid.model.relations.WorkoutAndExercises;
 import com.sdrockstarstudios.meatheadandroid.model.tables.Exercise;
 import com.sdrockstarstudios.meatheadandroid.model.tables.Sets;
 
@@ -47,10 +48,23 @@ public class WorkoutLogActivity extends AppCompatActivity
         TextView workoutDateTextView = findViewById(R.id.dateTextView);
         Intent intent = getIntent();
         workoutUUID = intent.getStringExtra(WORKOUT_UUID_KEY);
-        workoutName = intent.getStringExtra(WORKOUT_NAME_KEY);
-        startDate = new Date(intent.getLongExtra(WORKOUT_START_DATE_KEY, -1));
-        String date = DateFormat.getDateFormat(this).format(startDate);
-        workoutDateTextView.setText(date);
+
+        Disposable d = AppDatabase.getInstance(this).workoutDao().getWorkout(workoutUUID)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError( error -> {
+                    workoutName = intent.getStringExtra(WORKOUT_NAME_KEY);
+                    startDate = new Date(intent.getLongExtra(WORKOUT_START_DATE_KEY, -1));
+                    String date = DateFormat.getDateFormat(this).format(startDate);
+                    workoutDateTextView.setText(date);
+                })
+                .doOnSuccess(this::buildFromDatabase)
+                .subscribe();
+    }
+
+
+    private void buildFromDatabase(WorkoutAndExercises workout){
+        Log.i("WORKOUTLOGACTIVITY", "building new workout: " + workout.workout.workoutName);
     }
 
     public void add_exercise(View view){

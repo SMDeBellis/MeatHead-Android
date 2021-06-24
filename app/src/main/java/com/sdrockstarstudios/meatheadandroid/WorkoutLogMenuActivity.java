@@ -92,6 +92,11 @@ public class WorkoutLogMenuActivity extends AppCompatActivity
         String selectedWorkout = ((LoadWorkoutDialogFragment) dialog).getSelectedWorkout();
         Log.i(this.getClass().toString(), "onLoadWorkoutDialogPositiveClick - selectedWorkout: " + selectedWorkout);
         //Need to create an intent with the workout data and send to WorkoutLogActivity and have it build the workout from the database.
+        Intent intent = new Intent(this, WorkoutLogActivity.class);
+        Workout workout = availableWorkouts.get(selectedWorkout);
+        assert workout != null;
+        intent.putExtra(WorkoutLogActivity.WORKOUT_UUID_KEY, workout.workoutUUID);
+        startActivity(intent);
     }
 
     @Override // needs to handle the LoadWorkoutDialogFragment
