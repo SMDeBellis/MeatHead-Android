@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
 
 
@@ -65,6 +67,11 @@ public class WorkoutLogActivity extends AppCompatActivity
 
     private void buildFromDatabase(WorkoutAndExercises workout){
         Log.i("WORKOUTLOGACTIVITY", "building new workout: " + workout.workout.workoutName);
+        if(workout.workout.endDate != null){
+            ConstraintLayout mainLayout = findViewById(R.id.WorkoutLogMainLayout);
+            Button addExerciseButton = findViewById(R.id.button);
+            mainLayout.removeView(addExerciseButton);
+        }
     }
 
     public void add_exercise(View view){
