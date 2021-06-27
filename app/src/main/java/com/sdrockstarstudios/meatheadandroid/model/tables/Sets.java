@@ -26,7 +26,9 @@ public class Sets {
 //        this.repsOnly = repsOnly;
 //    }
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    public int id;
+
     @NonNull
     @ColumnInfo(name = "index")
     public Integer index;

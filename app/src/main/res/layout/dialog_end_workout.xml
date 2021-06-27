@@ -1,0 +1,10 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" android:id="@+id/end_workout_dialog_linear_layout">
+    <TextView
+        android:text="@string/end_workout_warning"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:id="@+id/end_workout_warning_text_view"
+        android:textSize="24sp"/>
+</LinearLayout>

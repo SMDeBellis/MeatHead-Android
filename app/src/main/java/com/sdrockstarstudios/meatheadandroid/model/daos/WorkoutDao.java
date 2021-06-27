@@ -31,6 +31,6 @@ public interface WorkoutDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable insert(Workout workout);
 
-    @Update
+    @Update(entity = Workout.class)
     Completable finishWorkout(FinishWorkout ended);
 }
