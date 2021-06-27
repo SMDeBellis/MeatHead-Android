@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -285,8 +286,8 @@ public class WorkoutLogActivity extends AppCompatActivity
         if(editable){
             Button addSetButton = new Button(this);
             addSetButton.setText("+");
-
-            horScrollViewLinearLayout.addView(addSetButton);
+            exerciseContainer.addView(addSetButton);
+            //horScrollViewLinearLayout.addView(addSetButton);
             addSetButton.setOnClickListener(v -> {
                 viewToModify = horScrollViewLinearLayout;
                 addSet(exerciseAndSets.setList.get(0).repsOnly);
@@ -313,8 +314,9 @@ public class WorkoutLogActivity extends AppCompatActivity
         //need to build sets
         List<LinearLayout> sets = buildSetLayoutsFromSetsList(exerciseAndSets.setList, exerciseContainer.getId(), editable);
         Collections.reverse(sets);
+
         for(LinearLayout set: sets){
-            horScrollViewLinearLayout.addView(set, 0);
+            horScrollViewLinearLayout.addView(set, 0, getSetLayoutParams(exerciseAndSets.setList.get(0).repsOnly));
         }
 
         return exerciseContainer;
@@ -332,6 +334,7 @@ public class WorkoutLogActivity extends AppCompatActivity
 
         Button addSetButton = new Button(this);
         addSetButton.setText("+");
+        exerciseContainer.addView(addSetButton);
 
         // container for [LinearLayoutHor[weightxreps, add button]]
         HorizontalScrollView horScrollView = new HorizontalScrollView(this);
@@ -343,7 +346,7 @@ public class WorkoutLogActivity extends AppCompatActivity
         UUID exerciseUUID = UUID.randomUUID();
         horScrollViewLinearLayout.setTag(exerciseUUID);
 
-        horScrollViewLinearLayout.addView(addSetButton);
+        //horScrollViewLinearLayout.addView(addSetButton);
         addSetButton.setOnClickListener(v -> {
             viewToModify = horScrollViewLinearLayout;
             addSet(repsOnly);
@@ -371,6 +374,7 @@ public class WorkoutLogActivity extends AppCompatActivity
                 5,
                 5,
                 exerciseLabelTextView.getPaddingBottom());
+        exerciseLabelTextView.setWidth(200);
         return exerciseLabelTextView;
     }
 
@@ -447,8 +451,9 @@ public class WorkoutLogActivity extends AppCompatActivity
         });
         setDataLayout.addView(multiplierTextView);
         setDataLayout.addView(repsTextView);
-        int setIndex = viewToModify.getChildCount() - 1;
-        viewToModify.addView(setDataLayout, setIndex);
+
+        int setIndex = viewToModify.getChildCount();
+        viewToModify.addView(setDataLayout, setIndex, getSetLayoutParams(repsOnly));
 
         set.parentExerciseUUID = viewToModify.getTag().toString();
         set.index = setIndex;
@@ -459,5 +464,15 @@ public class WorkoutLogActivity extends AppCompatActivity
                 .doOnError(error -> Toast.makeText(getApplicationContext(), "Error adding set to exercise.", Toast.LENGTH_SHORT))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
+    }
+
+    private LinearLayout.LayoutParams getSetLayoutParams(boolean repsOnly){
+        LinearLayout.LayoutParams setLayoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        if(repsOnly)
+            setLayoutParams.setMargins(15, 5, 0, 0);
+        else
+            setLayoutParams.setMargins(10, 5, 0, 0);
+        return setLayoutParams;
     }
 }

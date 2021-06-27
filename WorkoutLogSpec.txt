@@ -23,7 +23,7 @@ Issues to fix:
     - need to add delete for workouts also?
 
 - screen navigation investigation
-    - what happens to the workout when navigating back a screen
+    - what happens to the workout when navigating back a screen - now since its stored in the DB it is rebuilt.
     -
 
 - view past workouts
@@ -33,7 +33,7 @@ Issues to fix:
         - Test loading views with workouts that are completed and not completed.
         - Combine exercise view builder methods or create a factory?
 
-        - if workout is incomplete it can be modified if it has been finished then its view only.
+- short click on exercise textview brings up info screen for recent weights/reps
 
 - clone workouts
     - exercises only but no sets (completed clones will now be editable).
@@ -43,3 +43,5 @@ Issues to fix:
 - data sync service to sync data to central database on wifi connection.
 
 - make WorkoutLogMenu the main activity.
+
+-- bug: creating a new set checks set at 0 index which fails when its the first set in the load workout path. Exercise should have the reps only attribute.
