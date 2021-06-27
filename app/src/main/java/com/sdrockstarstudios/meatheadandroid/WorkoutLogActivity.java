@@ -310,7 +310,7 @@ public class WorkoutLogActivity extends AppCompatActivity
         exerciseContainer.setId(View.generateViewId());
 
         //need to build sets
-        List<LinearLayout> sets = buildSetLayoutsFromSetsList(exerciseAndSets.setList, exerciseContainer.getId(), editable, exerciseAndSets.exercise.repsOnly);
+        List<LinearLayout> sets = buildSetLayoutsFromSetsList(exerciseAndSets.setList, horScrollViewLinearLayout.getId(), editable, exerciseAndSets.exercise.repsOnly);
         Collections.reverse(sets);
 
         for(LinearLayout set: sets){
@@ -394,7 +394,7 @@ public class WorkoutLogActivity extends AppCompatActivity
             repsTextView.setTextSize(30);
             repsTextView.setText(String.valueOf(set.reps));
 
-            if(repsOnly){
+            if(!repsOnly){
                 TextView weightTextView = new TextView(this);
                 weightTextView.setTextSize(30);
                 weightTextView.setText(String.valueOf(set.weight));
