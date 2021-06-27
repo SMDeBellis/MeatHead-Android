@@ -11,11 +11,11 @@ import androidx.fragment.app.DialogFragment;
 
 public class DeleteSetDialogFragment extends DialogFragment {
     int containerToRemoveFromId;
-    int idToRemove;
+    String tagToRemove;
 
-    public DeleteSetDialogFragment(int containerId, int idToRemove){
+    public DeleteSetDialogFragment(int containerId, String tagToRemove){
         this.containerToRemoveFromId = containerId;
-        this.idToRemove = idToRemove;
+        this.tagToRemove = tagToRemove;
     }
 
     public interface NoticeDialogListener {

@@ -51,8 +51,8 @@ public class SetsDoaTest {
     @Test
     public void insertAndGetSet(){
         Workout workout = WorkoutFactory.workoutBuilder("testUUID", "My Awesome workout");
-        Exercise exercise = WorkoutFactory.exerciseBuilder("testExerciseUUID", "My Awesome exercise.","testUUID");
-        Sets toInsert = WorkoutFactory.setBuilder(5, "testExerciseUUID", 20, 5, false);
+        Exercise exercise = WorkoutFactory.exerciseBuilder("testExerciseUUID", "My Awesome exercise.","testUUID", false);
+        Sets toInsert = WorkoutFactory.setBuilder(5, "testExerciseUUID", 20, 5);
 
         mDatabase.workoutDao().insert(workout).blockingAwait();
         mDatabase.exerciseDoa().insert(exercise).blockingAwait();
@@ -67,8 +67,7 @@ public class SetsDoaTest {
                     return set.index == toInsert.index
                             && set.parentExerciseUUID.equals(toInsert.parentExerciseUUID)
                             && set.weight == toInsert.weight
-                            && set.reps == toInsert.reps
-                            && set.repsOnly == toInsert.repsOnly;
+                            && set.reps == toInsert.reps;
                 }
             });
     }
@@ -76,8 +75,8 @@ public class SetsDoaTest {
     @Test
     public void insertAndDeleteSet(){
         Workout workout = WorkoutFactory.workoutBuilder("testUUID", "My Awesome workout");
-        Exercise exercise = WorkoutFactory.exerciseBuilder("testExerciseUUID", "My Awesome exercise.","testUUID");
-        Sets toInsert = WorkoutFactory.setBuilder(5, "testExerciseUUID", 20, 5, false);
+        Exercise exercise = WorkoutFactory.exerciseBuilder("testExerciseUUID", "My Awesome exercise.","testUUID", false);
+        Sets toInsert = WorkoutFactory.setBuilder(5, "testExerciseUUID", 20, 5);
 
         mDatabase.workoutDao().insert(workout).blockingAwait();
         mDatabase.exerciseDoa().insert(exercise).blockingAwait();
@@ -92,8 +91,7 @@ public class SetsDoaTest {
                         return set.index == toInsert.index
                                 && set.parentExerciseUUID.equals(toInsert.parentExerciseUUID)
                                 && set.weight == toInsert.weight
-                                && set.reps == toInsert.reps
-                                && set.repsOnly == toInsert.repsOnly;
+                                && set.reps == toInsert.reps;
                     }
                 });
         mDatabase.setsDao().delete(toInsert).blockingAwait();
@@ -110,10 +108,10 @@ public class SetsDoaTest {
     @Test
     public void insertAndDeleteMultipleSets(){
         Workout workout = WorkoutFactory.workoutBuilder("testUUID", "My Awesome workout");
-        Exercise exercise = WorkoutFactory.exerciseBuilder("testUUID", "My Awesome exercise.","testUUID");
-        Sets set1 = WorkoutFactory.setBuilder(1, "testUUID", 20, 5, false);
-        Sets set2 = WorkoutFactory.setBuilder(2, "testUUID", 20, 5, false);
-        Sets set3 = WorkoutFactory.setBuilder(3, "testUUID", 20, 5, false);
+        Exercise exercise = WorkoutFactory.exerciseBuilder("testUUID", "My Awesome exercise.","testUUID", false);
+        Sets set1 = WorkoutFactory.setBuilder(1, "testUUID", 20, 5);
+        Sets set2 = WorkoutFactory.setBuilder(2, "testUUID", 20, 5);
+        Sets set3 = WorkoutFactory.setBuilder(3, "testUUID", 20, 5);
 
         mDatabase.workoutDao().insert(workout).blockingAwait();
         mDatabase.exerciseDoa().insert(exercise).blockingAwait();
@@ -133,22 +131,19 @@ public class SetsDoaTest {
                         assert s1.index == set1.index
                                 && s1.parentExerciseUUID.equals(set1.parentExerciseUUID)
                                 && s1.weight == set1.weight
-                                && s1.reps == set1.reps
-                                && s1.repsOnly == set1.repsOnly;
+                                && s1.reps == set1.reps;
 
                         Sets s2 = sets.get(1);
                         assert s2.index == set2.index
                                 && s2.parentExerciseUUID.equals(set2.parentExerciseUUID)
                                 && s2.weight == set2.weight
-                                && s2.reps == set2.reps
-                                && s2.repsOnly == set2.repsOnly;
+                                && s2.reps == set2.reps;
 
                         Sets s3 = sets.get(2);
                         assert s3.index == set3.index
                                 && s3.parentExerciseUUID.equals(set3.parentExerciseUUID)
                                 && s3.weight == set3.weight
-                                && s3.reps == set3.reps
-                                && s3.repsOnly == set3.repsOnly;
+                                && s3.reps == set3.reps;
                         return true;
                     }
                 });
@@ -169,8 +164,8 @@ public class SetsDoaTest {
     @Test
     public void getAllByParentExerciseUUIDWithOneSet(){
         Workout workout = WorkoutFactory.workoutBuilder("testUUID", "My Awesome workout");
-        Exercise exercise = WorkoutFactory.exerciseBuilder("testUUID", "My Awesome exercise.","testUUID");
-        Sets toInsert = WorkoutFactory.setBuilder(5, "testUUID", 20, 5, false);
+        Exercise exercise = WorkoutFactory.exerciseBuilder("testUUID", "My Awesome exercise.","testUUID", false);
+        Sets toInsert = WorkoutFactory.setBuilder(5, "testUUID", 20, 5);
 
         mDatabase.workoutDao().insert(workout).blockingAwait();
         mDatabase.exerciseDoa().insert(exercise).blockingAwait();
@@ -185,8 +180,7 @@ public class SetsDoaTest {
                         return set.index == toInsert.index
                                 && set.parentExerciseUUID.equals(toInsert.parentExerciseUUID)
                                 && set.weight == toInsert.weight
-                                && set.reps == toInsert.reps
-                                && set.repsOnly == toInsert.repsOnly;
+                                && set.reps == toInsert.reps;
                     }
                 });
     }
@@ -194,10 +188,10 @@ public class SetsDoaTest {
     @Test
     public void getAllByParentExerciseUUIDWithThreeSets(){
         Workout workout = WorkoutFactory.workoutBuilder("testUUID", "My Awesome workout");
-        Exercise exercise = WorkoutFactory.exerciseBuilder("testUUID", "My Awesome exercise.","testUUID");
-        Sets set1 = WorkoutFactory.setBuilder(1, "testUUID", 20, 5, false);
-        Sets set2 = WorkoutFactory.setBuilder(2, "testUUID", 20, 5, false);
-        Sets set3 = WorkoutFactory.setBuilder(3, "testUUID", 20, 5, false);
+        Exercise exercise = WorkoutFactory.exerciseBuilder("testUUID", "My Awesome exercise.","testUUID", false);
+        Sets set1 = WorkoutFactory.setBuilder(1, "testUUID", 20, 5);
+        Sets set2 = WorkoutFactory.setBuilder(2, "testUUID", 20, 5);
+        Sets set3 = WorkoutFactory.setBuilder(3, "testUUID", 20, 5);
 
         mDatabase.workoutDao().insert(workout).blockingAwait();
         mDatabase.exerciseDoa().insert(exercise).blockingAwait();
@@ -216,22 +210,19 @@ public class SetsDoaTest {
                         assert s1.index == set1.index
                                 && s1.parentExerciseUUID.equals(set1.parentExerciseUUID)
                                 && s1.weight == set1.weight
-                                && s1.reps == set1.reps
-                                && s1.repsOnly == set1.repsOnly;
+                                && s1.reps == set1.reps;
 
                         Sets s2 = sets.get(1);
                         assert s2.index == set2.index
                                 && s2.parentExerciseUUID.equals(set2.parentExerciseUUID)
                                 && s2.weight == set2.weight
-                                && s2.reps == set2.reps
-                                && s2.repsOnly == set2.repsOnly;
+                                && s2.reps == set2.reps;
 
                         Sets s3 = sets.get(2);
                         assert s3.index == set3.index
                                 && s3.parentExerciseUUID.equals(set3.parentExerciseUUID)
                                 && s3.weight == set3.weight
-                                && s3.reps == set3.reps
-                                && s3.repsOnly == set3.repsOnly;
+                                && s3.reps == set3.reps;
                         return true;
                     }
                 });

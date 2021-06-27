@@ -47,8 +47,8 @@ public class ExerciseDoaTest  {
     @Test
     public void getExerciseAndSetsSingleExercise(){
         Workout workout = WorkoutFactory.workoutBuilder("testUUID", "My Awesome workout");
-        Exercise exercise = WorkoutFactory.exerciseBuilder("testExerciseUUID", "My Awesome exercise.","testUUID");
-        Sets toInsert = WorkoutFactory.setBuilder(5, "testExerciseUUID", 20, 5, false);
+        Exercise exercise = WorkoutFactory.exerciseBuilder("testExerciseUUID", "My Awesome exercise.","testUUID", false);
+        Sets toInsert = WorkoutFactory.setBuilder(5, "testExerciseUUID", 20, 5);
 
         mDatabase.workoutDao().insert(workout).blockingAwait();
         mDatabase.exerciseDoa().insert(exercise).blockingAwait();
@@ -64,7 +64,7 @@ public class ExerciseDoaTest  {
     @Test
     public void deleteExerciseWithNoSetsFromDatabase(){
         Workout workout = WorkoutFactory.workoutBuilder("testUUID", "My Awesome workout");
-        Exercise exercise = WorkoutFactory.exerciseBuilder("testExerciseUUID", "My Awesome exercise.","testUUID");
+        Exercise exercise = WorkoutFactory.exerciseBuilder("testExerciseUUID", "My Awesome exercise.","testUUID", false);
 
         mDatabase.workoutDao().insert(workout).blockingAwait();
         mDatabase.exerciseDoa().insert(exercise).blockingAwait();
@@ -84,8 +84,8 @@ public class ExerciseDoaTest  {
     @Test
     public void deleteExerciseWithOneSet(){
         Workout workout = WorkoutFactory.workoutBuilder("testUUID", "My Awesome workout");
-        Exercise exercise = WorkoutFactory.exerciseBuilder("testExerciseUUID", "My Awesome exercise.","testUUID");
-        Sets toInsert = WorkoutFactory.setBuilder(5, "testExerciseUUID", 20, 5, false);
+        Exercise exercise = WorkoutFactory.exerciseBuilder("testExerciseUUID", "My Awesome exercise.","testUUID", false);
+        Sets toInsert = WorkoutFactory.setBuilder(5, "testExerciseUUID", 20, 5);
 
         mDatabase.workoutDao().insert(workout).blockingAwait();
         mDatabase.exerciseDoa().insert(exercise).blockingAwait();

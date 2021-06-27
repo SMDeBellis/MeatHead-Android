@@ -45,7 +45,7 @@ public class WorkoutLogTest {
     @Test
     public void addSingleExerciseTest() {
         ViewInteraction materialButton = onView(
-                allOf(withId(R.id.button), withText("Add Exercise"),
+                allOf(withId(R.id.add_exercise_button), withText("Add Exercise"),
                         childAtPosition(
                                 allOf(withId(R.id.WorkoutLogMainLayout),
                                         childAtPosition(
@@ -104,7 +104,7 @@ public class WorkoutLogTest {
     @Test
     public void deleteOnlyExerciseTest() {
         ViewInteraction materialButton = onView(
-                allOf(withId(R.id.button), withText("Add Exercise"),
+                allOf(withId(R.id.add_exercise_button), withText("Add Exercise"),
                         childAtPosition(
                                 allOf(withId(R.id.WorkoutLogMainLayout),
                                         childAtPosition(

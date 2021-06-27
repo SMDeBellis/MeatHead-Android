@@ -72,8 +72,8 @@ public class WorkoutLogActivity extends AppCompatActivity
         newFragment.show(getSupportFragmentManager(), "deleteExercise");
     }
 
-    public void deleteSet(int containerId, int idToRemove){
-        DialogFragment newFragment = new DeleteSetDialogFragment(containerId, idToRemove);
+    public void deleteSet(int containerId, String tagToRemove){
+        DialogFragment newFragment = new DeleteSetDialogFragment(containerId, tagToRemove);
         newFragment.show(getSupportFragmentManager(), "deleteSet");
     }
 
@@ -196,6 +196,7 @@ public class WorkoutLogActivity extends AppCompatActivity
         exercise.exerciseName = exerciseName;
         exercise.exerciseUUID = newExercise.getTag().toString();
         exercise.parentWorkoutUUID = workoutUUID;
+        exercise.repsOnly = repsOnly;
         AppDatabase.getInstance(getApplicationContext()).exerciseDoa().insert(exercise)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -210,9 +211,9 @@ public class WorkoutLogActivity extends AppCompatActivity
 
     private void handleDeleteSetDialogPositiveClick(DialogFragment dialog){
         int idOfContainer = ((DeleteSetDialogFragment) dialog).containerToRemoveFromId;
-        int idToRemove = ((DeleteSetDialogFragment) dialog).idToRemove;
+        String tagToRemove = ((DeleteSetDialogFragment) dialog).tagToRemove;
         LinearLayout container = findViewById(idOfContainer);
-        LinearLayout toRemove = findViewById(idToRemove);
+        LinearLayout toRemove = container.findViewWithTag(tagToRemove);
         Sets toRemoveFromDatabase = createSetToRemove(toRemove, container.getTag().toString(), container.indexOfChild(toRemove));
         Disposable d = AppDatabase.getInstance(getApplicationContext()).setsDao().delete(toRemoveFromDatabase)
                 .subscribeOn(Schedulers.io())
@@ -229,15 +230,12 @@ public class WorkoutLogActivity extends AppCompatActivity
         Sets set = new Sets();
         set.index = index;
         set.parentExerciseUUID = parentUUID;
+        set.setUUID = view.getTag().toString();
 
         int childCount = view.getChildCount();
         set.reps = Integer.parseInt(((TextView) view.getChildAt(childCount - 1)).getText().toString());
         if(childCount == 3){
             set.weight = Integer.parseInt(((TextView) view.getChildAt(0)).getText().toString());
-            set.repsOnly = false;
-        }
-        else{
-            set.repsOnly = true;
         }
         return set;
     }
@@ -290,11 +288,11 @@ public class WorkoutLogActivity extends AppCompatActivity
             //horScrollViewLinearLayout.addView(addSetButton);
             addSetButton.setOnClickListener(v -> {
                 viewToModify = horScrollViewLinearLayout;
-                addSet(exerciseAndSets.setList.get(0).repsOnly);
+                addSet(exerciseAndSets.exercise.repsOnly);
             });
 
             exerciseLabelTextView.setOnLongClickListener(v -> {
-                delete_exercise(exerciseContainer.getId());
+                delete_exercise(horScrollViewLinearLayout.getId());
                 return false;
             });
         }
@@ -312,11 +310,11 @@ public class WorkoutLogActivity extends AppCompatActivity
         exerciseContainer.setId(View.generateViewId());
 
         //need to build sets
-        List<LinearLayout> sets = buildSetLayoutsFromSetsList(exerciseAndSets.setList, exerciseContainer.getId(), editable);
+        List<LinearLayout> sets = buildSetLayoutsFromSetsList(exerciseAndSets.setList, horScrollViewLinearLayout.getId(), editable, exerciseAndSets.exercise.repsOnly);
         Collections.reverse(sets);
 
         for(LinearLayout set: sets){
-            horScrollViewLinearLayout.addView(set, 0, getSetLayoutParams(exerciseAndSets.setList.get(0).repsOnly));
+            horScrollViewLinearLayout.addView(set, 0, getSetLayoutParams(exerciseAndSets.exercise.repsOnly));
         }
 
         return exerciseContainer;
@@ -380,12 +378,13 @@ public class WorkoutLogActivity extends AppCompatActivity
 
 
     // need to set the setOnLongClickListener for each of these after return if editable with containing views id.
-    private List<LinearLayout> buildSetLayoutsFromSetsList(List<Sets> sets, int containerId, boolean editable){
+    private List<LinearLayout> buildSetLayoutsFromSetsList(List<Sets> sets, int containerId, boolean editable, boolean repsOnly){
         List<LinearLayout> setViews = new ArrayList<>();
         for(Sets set: sets){
             LinearLayout setDataLayout = new LinearLayout(this);
             setDataLayout.setOrientation(LinearLayout.HORIZONTAL);
             setDataLayout.setId(View.generateViewId());
+            setDataLayout.setTag(set.setUUID);
 
             TextView multiplierTextView = new TextView(this);
             multiplierTextView.setTextSize(30);
@@ -395,7 +394,7 @@ public class WorkoutLogActivity extends AppCompatActivity
             repsTextView.setTextSize(30);
             repsTextView.setText(String.valueOf(set.reps));
 
-            if(!set.repsOnly){
+            if(!repsOnly){
                 TextView weightTextView = new TextView(this);
                 weightTextView.setTextSize(30);
                 weightTextView.setText(String.valueOf(set.weight));
@@ -406,7 +405,7 @@ public class WorkoutLogActivity extends AppCompatActivity
 
             if(editable){
                 setDataLayout.setOnLongClickListener(v -> {
-                    deleteSet(containerId, setDataLayout.getId());
+                    deleteSet(containerId, setDataLayout.getTag().toString());
                     return false;
                 });
             }
@@ -435,6 +434,8 @@ public class WorkoutLogActivity extends AppCompatActivity
 
         Sets set = new Sets();
         set.reps = Integer.parseInt(repsEditText.getText().toString());
+        set.setUUID = UUID.randomUUID().toString();
+        setDataLayout.setTag(set.setUUID);
 
         if(!repsOnly){
             TextView weightTextView = new TextView(this);
@@ -446,7 +447,7 @@ public class WorkoutLogActivity extends AppCompatActivity
         }
         int idOfContainingView = viewToModify.getId();
         setDataLayout.setOnLongClickListener(v -> {
-            deleteSet(idOfContainingView, setDataLayout.getId());
+            deleteSet(idOfContainingView, setDataLayout.getTag().toString());
             return false;
         });
         setDataLayout.addView(multiplierTextView);
@@ -457,7 +458,6 @@ public class WorkoutLogActivity extends AppCompatActivity
 
         set.parentExerciseUUID = viewToModify.getTag().toString();
         set.index = setIndex;
-        set.repsOnly = repsOnly;
 
         AppDatabase.getInstance(getApplicationContext()).setsDao().insert(set)
                 .subscribeOn(Schedulers.io())
