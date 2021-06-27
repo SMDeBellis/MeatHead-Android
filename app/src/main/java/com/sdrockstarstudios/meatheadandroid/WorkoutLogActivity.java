@@ -316,7 +316,7 @@ public class WorkoutLogActivity extends AppCompatActivity
         Collections.reverse(sets);
 
         for(LinearLayout set: sets){
-            horScrollViewLinearLayout.addView(set, 0, getSetLayoutParams());
+            horScrollViewLinearLayout.addView(set, 0, getSetLayoutParams(exerciseAndSets.setList.get(0).repsOnly));
         }
 
         return exerciseContainer;
@@ -453,7 +453,7 @@ public class WorkoutLogActivity extends AppCompatActivity
         setDataLayout.addView(repsTextView);
 
         int setIndex = viewToModify.getChildCount();
-        viewToModify.addView(setDataLayout, setIndex, getSetLayoutParams());
+        viewToModify.addView(setDataLayout, setIndex, getSetLayoutParams(repsOnly));
 
         set.parentExerciseUUID = viewToModify.getTag().toString();
         set.index = setIndex;
@@ -466,10 +466,13 @@ public class WorkoutLogActivity extends AppCompatActivity
                 .subscribe();
     }
 
-    private LinearLayout.LayoutParams getSetLayoutParams(){
+    private LinearLayout.LayoutParams getSetLayoutParams(boolean repsOnly){
         LinearLayout.LayoutParams setLayoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        setLayoutParams.setMargins(5, 5, 0, 0);
+        if(repsOnly)
+            setLayoutParams.setMargins(15, 5, 0, 0);
+        else
+            setLayoutParams.setMargins(10, 5, 0, 0);
         return setLayoutParams;
     }
 }
