@@ -22,12 +22,13 @@ public class Sets {
 //        this.index = index;
 //        this.parentExerciseUUID = parentExerciseUUID;
 //        this.weight = weight;
-//        this.reps = reps;
 //        this.repsOnly = repsOnly;
 //    }
 
-    @PrimaryKey(autoGenerate = true)
-    public int id;
+    @PrimaryKey()
+    @NonNull
+    @ColumnInfo(name = "setUUID")
+    public String setUUID;
 
     @NonNull
     @ColumnInfo(name = "index")
@@ -41,7 +42,4 @@ public class Sets {
 
     @ColumnInfo(name = "reps")
     public int reps;
-
-    @ColumnInfo(name = "repsOnly")
-    public boolean repsOnly;
 }

@@ -27,4 +27,7 @@ public class Exercise {
 
     @ColumnInfo(name = "parentWorkoutUUID")
     public String parentWorkoutUUID;
+
+    @ColumnInfo(name = "repsOnly")
+    public boolean repsOnly;
 }

@@ -5,6 +5,8 @@ import com.sdrockstarstudios.meatheadandroid.model.tables.Sets;
 import com.sdrockstarstudios.meatheadandroid.model.tables.Workout;
 
 import java.util.Date;
+import java.util.Random;
+import java.util.UUID;
 
 public abstract class WorkoutFactory {
     public static Workout workoutBuilder(String uuid, String name){
@@ -16,21 +18,22 @@ public abstract class WorkoutFactory {
         return workout;
     }
 
-    public static Exercise exerciseBuilder(String uuid, String name, String parentUUID){
+    public static Exercise exerciseBuilder(String uuid, String name, String parentUUID, boolean repsOnly){
         Exercise exercise = new Exercise();
         exercise.exerciseUUID = uuid;
         exercise.exerciseName = name;
         exercise.parentWorkoutUUID = parentUUID;
+        exercise.repsOnly = repsOnly;
         return exercise;
     }
 
-    public static Sets setBuilder(int index, String parentUUID, int weight, int reps, boolean repsOnly){
+    public static Sets setBuilder(int index, String parentUUID, int weight, int reps){
         Sets set = new Sets();
+        set.setUUID = UUID.randomUUID().toString();
         set.index = index;
         set.parentExerciseUUID = parentUUID;
         set.weight = weight;
         set.reps = reps;
-        set.repsOnly = repsOnly;
         return set;
     }
 }
