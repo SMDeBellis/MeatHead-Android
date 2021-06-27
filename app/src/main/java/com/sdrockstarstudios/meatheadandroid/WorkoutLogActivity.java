@@ -7,10 +7,16 @@ import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.DialogFragment;
 
 
 import com.sdrockstarstudios.meatheadandroid.model.AppDatabase;
+import com.sdrockstarstudios.meatheadandroid.model.FinishWorkout;
+import com.sdrockstarstudios.meatheadandroid.model.relations.ExerciseAndSets;
+import com.sdrockstarstudios.meatheadandroid.model.relations.WorkoutAndExercises;
 import com.sdrockstarstudios.meatheadandroid.model.tables.Exercise;
 import com.sdrockstarstudios.meatheadandroid.model.tables.Sets;
 
@@ -26,7 +32,7 @@ import static android.provider.Settings.System.DATE_FORMAT;
 
 public class WorkoutLogActivity extends AppCompatActivity
         implements AddExerciseDialogFragment.NoticeDialogListener, DeleteExerciseDialogFragment.NoticeDialogListener,
-        DeleteSetDialogFragment.NoticeDialogListener {
+        DeleteSetDialogFragment.NoticeDialogListener, EndWorkoutDialogFragment.NoticeDialogListener {
 
     public static final String WORKOUT_NAME_KEY = "workout-name-key";
     public static final String WORKOUT_UUID_KEY = "workout-uuid-key";
@@ -34,24 +40,26 @@ public class WorkoutLogActivity extends AppCompatActivity
 
     public static final String EXERCISE_NAME_TEXT_VIEW_TAG = "exercise-name-text-view_key";
 
-    Date startDate;
     String workoutUUID;
-    String workoutName;
     LinearLayout viewToModify;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout_log);
-        TextView workoutDateTextView = findViewById(R.id.dateTextView);
         Intent intent = getIntent();
         workoutUUID = intent.getStringExtra(WORKOUT_UUID_KEY);
-        workoutName = intent.getStringExtra(WORKOUT_NAME_KEY);
-        startDate = new Date(intent.getLongExtra(WORKOUT_START_DATE_KEY, -1));
-        String date = DateFormat.getDateFormat(this).format(startDate);
-        workoutDateTextView.setText(date);
+        Disposable d = AppDatabase.getInstance(this).workoutDao().getWorkout(workoutUUID)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError( error -> {
+                    Toast.makeText(this, "Error occurred getting workout data.", Toast.LENGTH_SHORT).show();
+                    // Go back to WorkoutLogActivityMenu?
+                })
+                .doOnSuccess(this::buildFromDatabase)
+                .subscribe();
     }
+
 
     public void add_exercise(View view){
         DialogFragment newFragment = new AddExerciseDialogFragment();
@@ -73,6 +81,24 @@ public class WorkoutLogActivity extends AppCompatActivity
         newFragment.show(getSupportFragmentManager(), "addSet");
     }
 
+    public void endWorkout(String uuid){
+        DialogFragment newFragment = new EndWorkoutDialogFragment(uuid);
+        newFragment.show(getSupportFragmentManager(), "endWorkout");
+    }
+
+    private void handleEndWorkoutDialogPositiveClick(DialogFragment dialog){
+        String workoutUUID = ((EndWorkoutDialogFragment) dialog).getWorkoutId();
+        AppDatabase.getInstance(this).workoutDao().finishWorkout(new FinishWorkout(workoutUUID))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError(error -> Toast.makeText(this, "Error ending workout.", Toast.LENGTH_SHORT))
+                .doOnComplete(() -> {
+                    Intent intent = new Intent(this, WorkoutLogMenuActivity.class);
+                    startActivity(intent);
+                })
+                .subscribe();
+    }
+
     private void handleDeleteExerciseDialogPositiveClick(DialogFragment dialog){
         LinearLayout workoutContentLinearLayout = findViewById(R.id.WorkoutContentLinearLayout);
         int idToDelete = ((DeleteExerciseDialogFragment) dialog).getIdToDelete();
@@ -91,6 +117,61 @@ public class WorkoutLogActivity extends AppCompatActivity
                     workoutContentLinearLayout.removeView(viewToDelete);
                     Toast.makeText(getApplicationContext(), "Exercise Deleted", Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    private void buildFromDatabase(WorkoutAndExercises workout){
+        Log.i("WORKOUTLOGACTIVITY", "building new workout: " + workout.workout.workoutName);
+
+        // set workout date label
+        TextView workoutDateTextView = findViewById(R.id.dateTextView);
+        String date = DateFormat.getDateFormat(this).format(workout.workout.startDate);
+        workoutDateTextView.setText(date);
+
+        boolean editable = workout.workout.endDate == null;
+
+        if(!editable){
+            removeAddExerciseAndEndWorkoutButtons();
+        }
+        else{
+            Button addExerciseButton = findViewById(R.id.add_exercise_button);
+            Button endWorkoutButton = findViewById(R.id.end_workout_button);
+            addExerciseButton.setOnClickListener(this::add_exercise);
+            endWorkoutButton.setOnClickListener(v -> endWorkout(workout.workout.workoutUUID));
+        }
+
+        if(!workout.exercisesAndSets.isEmpty()){
+            LinearLayout exerciseLayout = findViewById(R.id.WorkoutContentLinearLayout);
+            for (ExerciseAndSets exercise : workout.exercisesAndSets) {
+                TextView exerciseLabelTextView = buildExerciseLabelTextView(exercise.exercise.exerciseName);
+                LinearLayout exerciseContainer = new LinearLayout(this);
+                exerciseContainer.setOrientation(LinearLayout.HORIZONTAL);
+                exerciseContainer.addView(exerciseLabelTextView);
+
+                View exerciseView = buildExistingExerciseView(exercise, editable);
+                exerciseLayout.addView(exerciseView);
+            }
+        }
+    }
+
+    private void removeAddExerciseAndEndWorkoutButtons(){
+        Button addExerciseButton = findViewById(R.id.add_exercise_button);
+        Button endWorkoutButton = findViewById(R.id.end_workout_button);
+
+        ConstraintLayout mainLayout = findViewById(R.id.WorkoutLogMainLayout);
+
+        ConstraintSet constraints = new ConstraintSet();
+        constraints.clone(mainLayout);
+        constraints.clear(R.id.add_exercise_button, ConstraintSet.END);
+        constraints.clear(R.id.add_exercise_button, ConstraintSet.BOTTOM);
+        constraints.clear(R.id.end_workout_button, ConstraintSet.END);
+        constraints.clear(R.id.end_workout_button, ConstraintSet.BOTTOM);
+        constraints.clear(R.id.exerciseEntryScrollView, ConstraintSet.BOTTOM);
+        constraints.connect(R.id.exerciseEntryScrollView, ConstraintSet.BOTTOM, mainLayout.getId(), ConstraintSet.BOTTOM);
+        constraints.setMargin(R.id.exerciseEntryScrollView, ConstraintSet.BOTTOM, 20 + addExerciseButton.getHeight());
+        constraints.applyTo(mainLayout);
+
+        mainLayout.removeView(addExerciseButton);
+        mainLayout.removeView(endWorkoutButton);
     }
 
     private void handleAddExerciseDialogPositiveClick(@NonNull DialogFragment dialog){
@@ -168,6 +249,8 @@ public class WorkoutLogActivity extends AppCompatActivity
             handleAddSetDialogPositiveClick(dialog);
         else if(dialog instanceof DeleteSetDialogFragment)
             handleDeleteSetDialogPositiveClick(dialog);
+        else if(dialog instanceof EndWorkoutDialogFragment)
+            handleEndWorkoutDialogPositiveClick(dialog);
         else
             handleAddExerciseDialogPositiveClick(dialog);
     }
@@ -179,16 +262,67 @@ public class WorkoutLogActivity extends AppCompatActivity
         }
     }
 
+
+
+    private View buildExistingExerciseView(ExerciseAndSets exerciseAndSets, boolean editable){
+        TextView exerciseLabelTextView = buildExerciseLabelTextView(exerciseAndSets.exercise.exerciseName);
+
+        // container for [label, horScrollview[weightxreps, addbutton]]
+        LinearLayout exerciseContainer = new LinearLayout(this);
+        exerciseContainer.setOrientation(LinearLayout.HORIZONTAL);
+        exerciseContainer.addView(exerciseLabelTextView);
+
+        // container for [LinearLayoutHor[weightxreps, add button]]
+        HorizontalScrollView horScrollView = new HorizontalScrollView(this);
+        horScrollView.postDelayed(() -> horScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT), 110L);
+
+        LinearLayout horScrollViewLinearLayout = new LinearLayout(this);
+        horScrollViewLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        horScrollViewLinearLayout.setId(View.generateViewId());
+        UUID exerciseUUID = UUID.fromString(exerciseAndSets.exercise.exerciseUUID);
+        horScrollViewLinearLayout.setTag(exerciseUUID);
+
+        if(editable){
+            Button addSetButton = new Button(this);
+            addSetButton.setText("+");
+
+            horScrollViewLinearLayout.addView(addSetButton);
+            addSetButton.setOnClickListener(v -> {
+                viewToModify = horScrollViewLinearLayout;
+                addSet(exerciseAndSets.setList.get(0).repsOnly);
+            });
+
+            exerciseLabelTextView.setOnLongClickListener(v -> {
+                delete_exercise(exerciseContainer.getId());
+                return false;
+            });
+        }
+        else{
+            exerciseLabelTextView.setOnLongClickListener(v -> {
+                Toast.makeText(this, "Workout not editable", Toast.LENGTH_SHORT).show();
+                return false;
+            });
+        }
+
+        horScrollView.addView(horScrollViewLinearLayout);
+
+        exerciseContainer.setTag(exerciseUUID);
+        exerciseContainer.addView(horScrollView);
+        exerciseContainer.setId(View.generateViewId());
+
+        //need to build sets
+        List<LinearLayout> sets = buildSetLayoutsFromSetsList(exerciseAndSets.setList, exerciseContainer.getId(), editable);
+        Collections.reverse(sets);
+        for(LinearLayout set: sets){
+            horScrollViewLinearLayout.addView(set, 0);
+        }
+
+        return exerciseContainer;
+    }
+
     @NonNull
     private View buildNewWeightExerciseView(String exerciseName, boolean repsOnly){
-        TextView exerciseLabelTextView = new TextView(this);
-        exerciseLabelTextView.setTag(EXERCISE_NAME_TEXT_VIEW_TAG);
-        exerciseLabelTextView.setText(exerciseName);
-        exerciseLabelTextView.setTextSize(25);
-        exerciseLabelTextView.setPadding(exerciseLabelTextView.getPaddingLeft(),
-                5,
-                5,
-                exerciseLabelTextView.getPaddingBottom());
+        TextView exerciseLabelTextView = buildExerciseLabelTextView(exerciseName);
 
         // container for [label, horScrollview[weightxreps, addbutton]]
         LinearLayout exerciseContainer = new LinearLayout(this);
@@ -226,6 +360,55 @@ public class WorkoutLogActivity extends AppCompatActivity
         });
 
         return exerciseContainer;
+    }
+
+    private TextView buildExerciseLabelTextView(String exerciseName){
+        TextView exerciseLabelTextView = new TextView(this);
+        exerciseLabelTextView.setTag(EXERCISE_NAME_TEXT_VIEW_TAG);
+        exerciseLabelTextView.setText(exerciseName);
+        exerciseLabelTextView.setTextSize(25);
+        exerciseLabelTextView.setPadding(exerciseLabelTextView.getPaddingLeft(),
+                5,
+                5,
+                exerciseLabelTextView.getPaddingBottom());
+        return exerciseLabelTextView;
+    }
+
+
+    // need to set the setOnLongClickListener for each of these after return if editable with containing views id.
+    private List<LinearLayout> buildSetLayoutsFromSetsList(List<Sets> sets, int containerId, boolean editable){
+        List<LinearLayout> setViews = new ArrayList<>();
+        for(Sets set: sets){
+            LinearLayout setDataLayout = new LinearLayout(this);
+            setDataLayout.setOrientation(LinearLayout.HORIZONTAL);
+            setDataLayout.setId(View.generateViewId());
+
+            TextView multiplierTextView = new TextView(this);
+            multiplierTextView.setTextSize(30);
+            multiplierTextView.setText("X");
+
+            TextView repsTextView = new TextView(this);
+            repsTextView.setTextSize(30);
+            repsTextView.setText(String.valueOf(set.reps));
+
+            if(!set.repsOnly){
+                TextView weightTextView = new TextView(this);
+                weightTextView.setTextSize(30);
+                weightTextView.setText(String.valueOf(set.weight));
+                setDataLayout.addView(weightTextView);
+            }
+            setDataLayout.addView(multiplierTextView);
+            setDataLayout.addView(repsTextView);
+
+            if(editable){
+                setDataLayout.setOnLongClickListener(v -> {
+                    deleteSet(containerId, setDataLayout.getId());
+                    return false;
+                });
+            }
+            setViews.add(setDataLayout);
+        }
+        return setViews;
     }
 
     private void addNewExerciseSetViewFromDialog(@NonNull DialogFragment dialog){

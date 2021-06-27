@@ -20,17 +20,31 @@
             android:layout_height="wrap_content" android:id="@+id/dateTextView"
             app:layout_constraintTop_toBottomOf="@+id/workoutLogHeader" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
+
     <Button
-            android:text="@string/add_exercise_button_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:id="@+id/button"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="10dp" app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="10dp" android:onClick="add_exercise"/>
+        android:id="@+id/add_exercise_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/add_exercise_button_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/end_workout_button" />
+
+    <Button
+        android:id="@+id/end_workout_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/end_workout_button_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <ScrollView
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/button" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/add_exercise_button" app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginEnd="10dp" android:layout_marginBottom="10dp"
             android:id="@+id/exerciseEntryScrollView" android:background="#7E7979"

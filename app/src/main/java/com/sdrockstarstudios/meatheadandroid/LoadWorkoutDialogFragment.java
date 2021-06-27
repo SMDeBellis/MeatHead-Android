@@ -53,7 +53,7 @@ public class LoadWorkoutDialogFragment extends DialogFragment {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         builder.setView(inflater.inflate(R.layout.dialog_load_workout, null))
-                .setPositiveButton(R.string.add_dialog_accept, (dialog, id) ->
+                .setPositiveButton(R.string.load_workout_confirm, (dialog, id) ->
                         listener.onDialogPositiveClick(LoadWorkoutDialogFragment.this))
                 .setNegativeButton(R.string.cancel, (dialog, which) ->
                         listener.onDialogNegativeClick(LoadWorkoutDialogFragment.this));

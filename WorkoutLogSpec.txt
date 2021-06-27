@@ -27,26 +27,19 @@ Issues to fix:
     -
 
 - view past workouts
-    - start with the load workout screen spawning a new Activity. Later probably be should be combined in the WorkoutLogActivity with seperate fragements.
+    - start with the load workout spawning a new WorkoutLogActivity. Later probably be should be combined in the WorkoutLogActivity with seperate fragements.
         This will allow to on small devices change easily between viewing different workouts compared to the current, and on large devices view side by side.
-        - select workout by name and start date (or end date?).
-            - mark unfinished workouts in some way.
-        - add finish button on workout log screen
-            - button will create the enddate timestamp and update the database
-            - button will navigate back to the MainMenuActivity (or WorkoutLogMenu?)
 
+        - Test loading views with workouts that are completed and not completed.
+        - Combine exercise view builder methods or create a factory?
 
         - if workout is incomplete it can be modified if it has been finished then its view only.
 
+- clone workouts
+    - exercises only but no sets (completed clones will now be editable).
 
 - handle Disposable objects
 
 - data sync service to sync data to central database on wifi connection.
 
-
-
-Tasks for view past workouts:
-Create Alert dialog with dropdown containing workout selections from database
-Modify WorkoutLogActivity to be able to construct workout from database.
-Capture alert dialog positive and negative clicks in workout menu screen. If workout is unfinished pass a modifiable flag to intent telling
-    workoutLogActivity to add modification functionality or not.
+- make WorkoutLogMenu the main activity.

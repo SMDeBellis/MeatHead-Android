@@ -8,5 +8,9 @@
     <string name="add_dialog_accept">Add</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+    <string name="load_workout_confirm">Load</string>
     <string name="meatheadBanner">MeatHead</string>
+    <string name="end_workout_button_text">End Workout</string>
+    <string name="end_workout_confirm">End</string>
+    <string name="end_workout_warning">End Workout? Once ended you can no longer modify the workout.</string>
 </resources>

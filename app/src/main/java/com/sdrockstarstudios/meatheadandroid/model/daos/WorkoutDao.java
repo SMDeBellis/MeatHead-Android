@@ -5,7 +5,9 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
+import androidx.room.Update;
 
+import com.sdrockstarstudios.meatheadandroid.model.FinishWorkout;
 import com.sdrockstarstudios.meatheadandroid.model.relations.WorkoutAndExercises;
 import com.sdrockstarstudios.meatheadandroid.model.tables.Workout;
 
@@ -28,4 +30,7 @@ public interface WorkoutDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable insert(Workout workout);
+
+    @Update(entity = Workout.class)
+    Completable finishWorkout(FinishWorkout ended);
 }
