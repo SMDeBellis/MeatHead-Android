@@ -44,4 +44,6 @@ Issues to fix:
 
 - make WorkoutLogMenu the main activity.
 
--- bug: creating a new set checks set at 0 index which fails when its the first set in the load workout path. Exercise should have the reps only attribute.
+- customize the Dialog layouts so they look better.
+
+- add formatting to the load workout dialog. Make them like the number picker.

@@ -48,6 +48,7 @@ public class AddExerciseDialogFragment extends DialogFragment{
                         listener.onDialogNegativeClick(AddExerciseDialogFragment.this));
 
         AlertDialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
 
         dialog.setOnShowListener(dialogInterface -> {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
