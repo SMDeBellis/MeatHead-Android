@@ -7,7 +7,10 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -30,6 +33,8 @@ import java.util.Optional;
 import io.reactivex.Maybe;
 
 public class ExerciseInfoDialogFragment extends DialogFragment {
+
+    private static final int MAX_HEIGHT = 400;
 
     private List<WorkoutAndExercises> workoutsAndExercises;
     private String exerciseName;
@@ -74,6 +79,15 @@ public class ExerciseInfoDialogFragment extends DialogFragment {
         });
 
         return dialog;
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+        params.height = MAX_HEIGHT;
+        getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
     }
 
     private void buildExerciseDisplayScrollView(AlertDialog dialog, String exerciseName, List<WorkoutAndExercises> workouts){
