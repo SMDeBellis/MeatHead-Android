@@ -22,6 +22,10 @@ public interface WorkoutDao {
     Single<List<Workout>> getAllWorkouts();
 
     @Transaction
+    @Query("SELECT * FROM workout INNER JOIN exercise ON workout.workoutUUID = exercise.parentWorkoutUUID WHERE exercise.exerciseName = (:exerciseName)")
+    Single<List<WorkoutAndExercises>> getAllWorkoutsWithExercise(String exerciseName);
+
+    @Transaction
     @Query("SELECT * FROM workout WHERE workoutUUID = (:uuid)")
     Single<WorkoutAndExercises> getWorkout(String uuid);
 

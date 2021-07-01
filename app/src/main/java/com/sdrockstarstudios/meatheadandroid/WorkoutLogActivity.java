@@ -33,7 +33,8 @@ import static android.provider.Settings.System.DATE_FORMAT;
 
 public class WorkoutLogActivity extends AppCompatActivity
         implements AddExerciseDialogFragment.NoticeDialogListener, DeleteExerciseDialogFragment.NoticeDialogListener,
-        DeleteSetDialogFragment.NoticeDialogListener, EndWorkoutDialogFragment.NoticeDialogListener {
+        DeleteSetDialogFragment.NoticeDialogListener, EndWorkoutDialogFragment.NoticeDialogListener,
+        ExerciseInfoDialogFragment.NoticeDialogListener {
 
     public static final String WORKOUT_NAME_KEY = "workout-name-key";
     public static final String WORKOUT_UUID_KEY = "workout-uuid-key";
@@ -85,6 +86,16 @@ public class WorkoutLogActivity extends AppCompatActivity
     public void endWorkout(String uuid){
         DialogFragment newFragment = new EndWorkoutDialogFragment(uuid);
         newFragment.show(getSupportFragmentManager(), "endWorkout");
+    }
+
+    public void showExerciseInfo(String exerciseName){
+        Disposable d = AppDatabase.getInstance(this).workoutDao().getAllWorkoutsWithExercise(exerciseName)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(workouts -> {
+                    DialogFragment newFragment = new ExerciseInfoDialogFragment(exerciseName, workouts);
+                    newFragment.show(getSupportFragmentManager(), "exerciseInfo");
+                });
     }
 
     private void handleEndWorkoutDialogPositiveClick(DialogFragment dialog){
@@ -373,6 +384,7 @@ public class WorkoutLogActivity extends AppCompatActivity
                 5,
                 exerciseLabelTextView.getPaddingBottom());
         exerciseLabelTextView.setWidth(200);
+        exerciseLabelTextView.setOnClickListener(v -> showExerciseInfo(exerciseName));
         return exerciseLabelTextView;
     }
 
