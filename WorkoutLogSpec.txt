@@ -47,3 +47,8 @@ Issues to fix:
 - customize the Dialog layouts so they look better.
 
 - add formatting to the load workout dialog. Make them like the number picker.
+
+- view exercise info dialog
+    - add formatting to the strings.
+    - limit the size the dialog width can be and make horizontally scrollable.
+    - make MAX_HEIGHT dimension dynamic to work for different size screens.

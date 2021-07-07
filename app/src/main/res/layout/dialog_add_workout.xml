@@ -1,7 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:theme="@style/popup_dialogs">
     <EditText
         android:id="@+id/workout_name_entry"
         android:inputType="text"

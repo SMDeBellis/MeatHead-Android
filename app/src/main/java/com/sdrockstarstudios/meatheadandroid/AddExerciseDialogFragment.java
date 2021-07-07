@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -38,7 +39,8 @@ public class AddExerciseDialogFragment extends DialogFragment{
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        ContextThemeWrapper newContext = new ContextThemeWrapper(getContext(), R.style.popup_dialogs);
+        AlertDialog.Builder builder = new AlertDialog.Builder(newContext);
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         builder.setView(inflater.inflate(R.layout.dialog_add_exercise, null))
