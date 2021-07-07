@@ -1,7 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="wrap_content"
-              android:layout_height="wrap_content" android:id="@+id/delete_set_dialog_linear_layout">
+              android:layout_height="wrap_content" android:id="@+id/delete_set_dialog_linear_layout"
+              android:theme="@style/popup_dialogs">
     <TextView
             android:text="Delete set? All set data will be deleted."
             android:layout_width="match_parent"

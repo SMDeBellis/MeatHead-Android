@@ -8,6 +8,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -64,7 +65,8 @@ public class ExerciseInfoDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        ContextThemeWrapper newContext = new ContextThemeWrapper(getContext(), R.style.popup_dialogs);
+        AlertDialog.Builder builder = new AlertDialog.Builder(newContext);
         LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         builder.setView(inflater.inflate(R.layout.dialog_exercies_info, null))
@@ -112,6 +114,7 @@ public class ExerciseInfoDialogFragment extends DialogFragment {
                     }
                     TextView infoTextView = new TextView(getContext());
                     infoTextView.setText(setsString.toString());
+                    infoTextView.setTextSize(24);
                     infoContainer.addView(infoTextView);
                 }
             }
