@@ -3,6 +3,7 @@ package com.sdrockstarstudios.meatheadandroid;
 import android.content.Intent;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
@@ -336,7 +337,7 @@ public class WorkoutLogActivity extends AppCompatActivity
         exerciseContainer.addView(exerciseLabelTextView);
 
 
-        Button addSetButton = new Button(this);
+        Button addSetButton = (Button) LayoutInflater.from(this).inflate(R.layout.add_set_button, null);//new Button(this);
         addSetButton.setText("+");
         exerciseContainer.addView(addSetButton);
 
@@ -378,7 +379,7 @@ public class WorkoutLogActivity extends AppCompatActivity
                 5,
                 5,
                 exerciseLabelTextView.getPaddingBottom());
-        exerciseLabelTextView.setWidth(600);
+        exerciseLabelTextView.setWidth(getResources().getDimensionPixelSize(R.dimen.exercise_name_text_edit_width));
         exerciseLabelTextView.setOnClickListener(v -> showExerciseInfo(exerciseName));
         return exerciseLabelTextView;
     }
