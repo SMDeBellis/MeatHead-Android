@@ -42,7 +42,7 @@ Issues to fix:
 
 - data sync service to sync data to central database on wifi connection.
 
-- make WorkoutLogMenu the main activity.
+- make MainMenu the main activity.
 
 - customize the Dialog layouts so they look better.
 
@@ -52,3 +52,5 @@ Issues to fix:
     - add formatting to the strings.
     - limit the size the dialog width can be and make horizontally scrollable.
     - make MAX_HEIGHT dimension dynamic to work for different size screens.
+
+- move hard coded dimensions and text into resource files.
