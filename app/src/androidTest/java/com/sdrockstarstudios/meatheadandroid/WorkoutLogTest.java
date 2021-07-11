@@ -40,7 +40,7 @@ import static org.hamcrest.Matchers.is;
 public class WorkoutLogTest {
 
     @Rule
-    public ActivityScenarioRule<MainActivity> mActivityTestRule = new ActivityScenarioRule<>(MainActivity.class);
+    public ActivityScenarioRule<MainMenuActivity> mActivityTestRule = new ActivityScenarioRule<>(MainMenuActivity.class);
 
     @Test
     public void addSingleExerciseTest() {
