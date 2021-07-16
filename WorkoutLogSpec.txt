@@ -42,8 +42,6 @@ Issues to fix:
 
 - data sync service to sync data to central database on wifi connection.
 
-- make MainMenu the main activity.
-
 - customize the Dialog layouts so they look better.
 
 - add formatting to the load workout dialog. Make them like the number picker.
@@ -54,3 +52,5 @@ Issues to fix:
     - make MAX_HEIGHT dimension dynamic to work for different size screens.
 
 - move hard coded dimensions and text into resource files.
+
+- fix dialog formatting for older versions or increase min supported android value.
