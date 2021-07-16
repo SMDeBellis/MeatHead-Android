@@ -22,4 +22,8 @@ public class Weight {
     @NonNull
     @TypeConverters(DateConverter.class)
     public Date date;
+
+    @ColumnInfo(name = "weight")
+    @NonNull
+    public Integer weight;
 }
