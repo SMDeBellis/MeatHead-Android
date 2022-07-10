@@ -31,7 +31,9 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class WorkoutLogMenuActivity extends AppCompatActivity
-        implements AddWorkoutDialogFragment.NoticeDialogListener, LoadWorkoutDialogFragment.NoticeDialogListener{
+        implements AddWorkoutDialogFragment.NoticeDialogListener,
+        LoadWorkoutDialogFragment.NoticeDialogListener,
+        CopyWorkoutDialogFragment.NoticeDialogListener {
 
     private Map<String, Workout> availableWorkouts;
 
@@ -41,16 +43,22 @@ public class WorkoutLogMenuActivity extends AppCompatActivity
         setContentView(R.layout.activity_workout_log_menu);
         Button loadWorkoutButton = findViewById(R.id.loadWorkoutButton);
         loadWorkoutButton.setOnClickListener(this::pressLoadWorkoutButton);
+        Button copyWorkoutButton = findViewById(R.id.copyWorkoutButton);
+        copyWorkoutButton.setOnClickListener(this::pressCopyWorkoutButton);
         Disposable d = AppDatabase.getInstance(getApplicationContext()).workoutDao().getAllWorkouts()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess(list -> {
                     availableWorkouts = createLabelToWorkoutMapping(list);
                     if(availableWorkouts.isEmpty()) {
-                        loadWorkoutButton.setEnabled(false);
+                        loadWorkoutButton.setVisibility(View.GONE);
+                        copyWorkoutButton.setVisibility(View.GONE);
                     }
                 })
-                .doOnError(error -> loadWorkoutButton.setEnabled(false))
+                .doOnError(error -> {
+                    loadWorkoutButton.setEnabled(false);
+                    copyWorkoutButton.setEnabled(false);
+                })
                 .subscribe();
     }
 
@@ -60,9 +68,18 @@ public class WorkoutLogMenuActivity extends AppCompatActivity
     }
 
     public void pressLoadWorkoutButton(View view){
+        Log.i("pressLoadWorkoutButton", "++++++++++ pressing load workout button");
         List<String> availableWorkoutList = new ArrayList<>(availableWorkouts.keySet());
         DialogFragment newFragment = new LoadWorkoutDialogFragment(availableWorkoutList);
         newFragment.show(getSupportFragmentManager(), "loadWorkout");
+    }
+
+    public void pressCopyWorkoutButton(View view){
+        Log.i("pressCopyWorkoutButton", "++++++++++ pressing copy workout button");
+        List<String> availableWorkoutList = new ArrayList<>(availableWorkouts.keySet());
+        Log.i("Testing Copy Workout", "available workout: " + availableWorkoutList.toString());
+        DialogFragment newFragment = new CopyWorkoutDialogFragment(availableWorkoutList);
+        newFragment.show(getSupportFragmentManager(), "copyWorkout");
     }
 
     private void onAddWorkoutDialogPositiveClick(DialogFragment dialog){
@@ -99,12 +116,38 @@ public class WorkoutLogMenuActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    private void onCopyWorkoutDialogPositiveClick(DialogFragment dialog){
+        EditText workoutNameEditText = dialog.getDialog().findViewById(R.id.workout_name_entry);
+        String workoutName = workoutNameEditText.getText().toString();
+        String uuid = UUID.randomUUID().toString();
+
+        // insert workout into database
+        Workout workout = new Workout();
+        workout.startDate = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()).getTime();
+        workout.workoutUUID = uuid;
+        workout.workoutName = workoutName;
+        AppDatabase.getInstance(getApplicationContext()).workoutDao().insert(workout)
+                .subscribeOn(Schedulers.io())
+                .doOnError(error -> Toast.makeText(getApplicationContext(), "Error inserting workout: " + workoutName + " in database.", Toast.LENGTH_SHORT))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+
+        Intent intent = new Intent(this, WorkoutLogActivity.class);
+        intent.putExtra(WorkoutLogActivity.WORKOUT_NAME_KEY, workoutName);
+        intent.putExtra(WorkoutLogActivity.WORKOUT_UUID_KEY, uuid);
+        intent.putExtra(WorkoutLogActivity.WORKOUT_START_DATE_KEY, workout.startDate.getTime());
+        startActivity(intent);
+    }
+
     @Override // needs to handle the LoadWorkoutDialogFragment
     public void onDialogPositiveClick(DialogFragment dialog) {
         if(dialog instanceof AddWorkoutDialogFragment)
             onAddWorkoutDialogPositiveClick(dialog);
-        else {
+        else if(dialog instanceof LoadWorkoutDialogFragment){
             onLoadWorkoutDialogPositiveClick(dialog);
+        }
+        else {
+            onCopyWorkoutDialogPositiveClick(dialog);
         }
     }
 
