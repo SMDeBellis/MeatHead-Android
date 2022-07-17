@@ -3,7 +3,6 @@ package com.sdrockstarstudios.meatheadandroid;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -14,17 +13,20 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.sdrockstarstudios.meatheadandroid.model.AppDatabase;
+import com.sdrockstarstudios.meatheadandroid.model.relations.ExerciseAndSets;
+import com.sdrockstarstudios.meatheadandroid.model.tables.Exercise;
 import com.sdrockstarstudios.meatheadandroid.model.tables.Workout;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -117,8 +119,9 @@ public class WorkoutLogMenuActivity extends AppCompatActivity
     }
 
     private void onCopyWorkoutDialogPositiveClick(DialogFragment dialog){
-        EditText workoutNameEditText = dialog.getDialog().findViewById(R.id.workout_name_entry);
-        String workoutName = workoutNameEditText.getText().toString();
+        String selectedWorkout = ((CopyWorkoutDialogFragment) dialog).getSelectedWorkout();
+        Workout workoutToCopy = availableWorkouts.get(selectedWorkout);
+        String workoutName = stripDateFromWorkoutName(selectedWorkout);
         String uuid = UUID.randomUUID().toString();
 
         // insert workout into database
@@ -131,6 +134,30 @@ public class WorkoutLogMenuActivity extends AppCompatActivity
                 .doOnError(error -> Toast.makeText(getApplicationContext(), "Error inserting workout: " + workoutName + " in database.", Toast.LENGTH_SHORT))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
+
+        // insert a new exercise for each existing exercise with the new workout.
+        AppDatabase.getInstance(getApplicationContext())
+                .workoutDao()
+                .getWorkout(workoutToCopy.workoutUUID)
+                .subscribeOn(Schedulers.io())
+                .doOnError(error -> Toast.makeText(getApplicationContext(), "Error inserting workout: " + workoutName + " in database.", Toast.LENGTH_SHORT))
+                .doOnSuccess(x -> {
+                    for(ExerciseAndSets eas : x.exercisesAndSets){
+                        Exercise exercise = new Exercise();
+                        exercise.exerciseName = eas.exercise.exerciseName;
+                        exercise.exerciseUUID = UUID.randomUUID().toString();
+                        exercise.parentWorkoutUUID = workout.workoutUUID;
+                        exercise.repsOnly = eas.exercise.repsOnly;
+                        AppDatabase.getInstance(getApplicationContext()).exerciseDoa().insert(exercise)
+                                .subscribeOn(Schedulers.io())
+                                .doOnError(error -> Toast.makeText(getApplicationContext(), "Error inserting exercise: " + exercise.exerciseName + " in database.", Toast.LENGTH_SHORT))
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe();
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+
 
         Intent intent = new Intent(this, WorkoutLogActivity.class);
         intent.putExtra(WorkoutLogActivity.WORKOUT_NAME_KEY, workoutName);
@@ -165,5 +192,12 @@ public class WorkoutLogMenuActivity extends AppCompatActivity
             workoutMapping.put(label, workout);
         }
         return workoutMapping;
+    }
+
+    private String stripDateFromWorkoutName(String workoutName){
+        Pattern pattern = Pattern.compile("\\**\\s*((\\d*|\\D*|\\s*)+)\\s\\d+/\\d+/\\d+");
+        Matcher matcher = pattern.matcher(workoutName);
+        matcher.find();
+        return matcher.group(1);
     }
 }
