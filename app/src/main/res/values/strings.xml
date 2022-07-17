@@ -9,6 +9,7 @@
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="load_workout_confirm">Load</string>
+    <string name="copy_workout_confirm">Copy</string>
     <string name="meatheadBanner">MeatHead</string>
     <string name="end_workout_button_text">End Workout</string>
     <string name="end_workout_confirm">End</string>

@@ -299,7 +299,7 @@ public class WorkoutLogActivity extends AppCompatActivity
             });
 
             exerciseLabelTextView.setOnLongClickListener(v -> {
-                delete_exercise(horScrollViewLinearLayout.getId());
+                delete_exercise(exerciseContainer.getId());
                 return false;
             });
         }
