@@ -1,17 +1,13 @@
 package com.sdrockstarstudios.meatheadandroid;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.core.widget.TextViewCompat;
 import androidx.fragment.app.DialogFragment;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -72,7 +68,6 @@ public class WorkoutLogMenuActivity extends AppCompatActivity
                     List<HorizontalScrollView> workoutViews = createWorkoutViews(availableWorkouts, toEnable);
                     LinearLayout workoutLayoutView = findViewById(R.id.workoutListLinearLayout);
 
-//                    workoutLayoutView.getFocusedChild();
                     for(HorizontalScrollView v : workoutViews){
                         Log.d(this.getClass().toString(), "Adding workoutScrollview to workoutLayout view");
                         workoutLayoutView.addView(v);
