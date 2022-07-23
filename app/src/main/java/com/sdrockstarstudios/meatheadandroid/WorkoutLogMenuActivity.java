@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -68,6 +69,9 @@ public class WorkoutLogMenuActivity extends AppCompatActivity
                     List<HorizontalScrollView> workoutViews = createWorkoutViews(availableWorkouts, toEnable);
                     LinearLayout workoutLayoutView = findViewById(R.id.workoutListLinearLayout);
 
+                    workoutLayoutView.addView(getWorkoutListHeader());
+
+
                     for(HorizontalScrollView v : workoutViews){
                         Log.d(this.getClass().toString(), "Adding workoutScrollview to workoutLayout view");
                         workoutLayoutView.addView(v);
@@ -88,6 +92,27 @@ public class WorkoutLogMenuActivity extends AppCompatActivity
                 .subscribe();
     }
 
+    public LinearLayout getWorkoutListHeader(){
+        LinearLayout workoutListHeaderRow = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.workout_list_row, null);
+        workoutListHeaderRow.setFocusable(false);
+        TextView workoutNameHeaderTextView = (TextView) workoutListHeaderRow.getChildAt(0);
+        workoutNameHeaderTextView.setText("Workout Name");
+        workoutNameHeaderTextView.setFocusable(false);
+        workoutNameHeaderTextView.setTextSize(getResources().getDimension(R.dimen.workout_list_header_text_size));
+
+        TextView workoutStartDateHeaderTextView = (TextView) workoutListHeaderRow.getChildAt(1);
+        workoutStartDateHeaderTextView.setText("Start Date");
+        workoutStartDateHeaderTextView.setFocusable(false);
+        workoutStartDateHeaderTextView.setTextSize(getResources().getDimension(R.dimen.workout_list_header_text_size));
+
+        TextView workoutEndDateHeaderTextView = (TextView) workoutListHeaderRow.getChildAt(2);
+        workoutEndDateHeaderTextView.setText("End Date");
+        workoutEndDateHeaderTextView.setFocusable(false);
+        workoutEndDateHeaderTextView.setTextSize(getResources().getDimension(R.dimen.workout_list_header_text_size));
+
+        return workoutListHeaderRow;
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     public List<HorizontalScrollView> createWorkoutViews(Map<String, Workout> workoutsMap, List<Button> toReady){
         ArrayList<HorizontalScrollView> views = new ArrayList<>();
@@ -96,14 +121,30 @@ public class WorkoutLogMenuActivity extends AppCompatActivity
             workoutContainer.setFocusable(true);
             workoutContainer.setFocusableInTouchMode(true);
             Workout workout = entry.getValue();
-            TextView tv = new TextView(this);
-            tv.setText(createLabelFromWorkout(workout));
-            tv.setTag(R.id.workout_name_key);
-            tv.setTag(R.id.workout_uuid, workout.workoutUUID);
-            tv.setFocusable(false);
-            tv.setTextSize(getResources().getDimension(R.dimen.workout_name_text_height));
 
-            workoutContainer.addView(tv);
+            LinearLayout workoutListRow = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.workout_list_row, null);
+
+            TextView workoutNameTextView = (TextView) workoutListRow.getChildAt(0);
+            workoutNameTextView.setText(createLabelFromWorkout(workout));
+            workoutNameTextView.setTag(R.id.workout_name_key);
+            workoutNameTextView.setTag(R.id.workout_uuid, workout.workoutUUID);
+            workoutNameTextView.setFocusable(false);
+            workoutNameTextView.setTextSize(getResources().getDimension(R.dimen.workout_list_header_text_size));
+
+            TextView workoutStartDateTextView = (TextView) workoutListRow.getChildAt(1);
+            workoutStartDateTextView.setText(DateFormat.getDateFormat(this).format(workout.startDate));
+            workoutStartDateTextView.setFocusable(false);
+            workoutStartDateTextView.setTextSize(getResources().getDimension(R.dimen.workout_list_header_text_size));
+
+            if(workout.endDate != null) {
+                Log.i("WorkoutDate", "+++++++++++++++++" + workout.endDate.toString());
+                TextView workoutEndDateTextView = (TextView) workoutListRow.getChildAt(2);
+                workoutEndDateTextView.setText(DateFormat.getDateFormat(this).format(workout.endDate));
+                workoutEndDateTextView.setFocusable(false);
+                workoutEndDateTextView.setTextSize(getResources().getDimension(R.dimen.workout_list_header_text_size));
+            }
+
+            workoutContainer.addView(workoutListRow);
 
             workoutContainer.setOnTouchListener((v, ev) -> {
                 Log.i(this.getClass().toString(), "workoutContainer touched......");
@@ -248,12 +289,10 @@ public class WorkoutLogMenuActivity extends AppCompatActivity
     public void onDialogNegativeClick(DialogFragment dialog) {}
 
     private String createLabelFromWorkout(Workout workout){
-        String date = DateFormat.getDateFormat(this).format(workout.startDate);
-        String label = workout.workoutName + " " + date;
         if(workout.endDate == null)
-            return "* " + label;
+            return "* " + workout.workoutName;
         else
-            return label;
+            return workout.workoutName;
     }
 
     private Map<String, Workout> createUUIDToWorkoutMapping(List<Workout> workouts){
