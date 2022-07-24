@@ -31,4 +31,6 @@
     <color name="black_coral">#ff67697c</color>
     <color name="laurel_green">#ffaaae8e</color>
     <color name="light_goldenrod_yellow">#fffaf8d4</color>
+
+    <color name="workout_list_header_gray"></color>
 </resources>
