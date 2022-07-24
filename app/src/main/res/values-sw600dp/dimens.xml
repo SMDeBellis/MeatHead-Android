@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="exercise_name_text_edit_width">150dp</dimen>
-    <dimen name="workout_list_header_text_size">24sp</dimen>
+    <dimen name="workout_list_header_text_size">18sp</dimen>
+    <dimen name="workout_list_row_text_size">12dp</dimen>
 </resources>

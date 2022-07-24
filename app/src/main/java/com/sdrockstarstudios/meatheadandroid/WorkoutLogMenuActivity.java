@@ -1,6 +1,8 @@
 package com.sdrockstarstudios.meatheadandroid;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.DialogFragment;
 
 import android.annotation.SuppressLint;
@@ -12,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,13 +67,13 @@ public class WorkoutLogMenuActivity extends AppCompatActivity
                         copyWorkoutButton.setVisibility(View.GONE);
                     }
                     Log.d(this.getClass().toString(), "creatingWorkoutViews");
-                    List<HorizontalScrollView> workoutViews = createWorkoutViews(availableWorkouts, toEnable);
+                    List<ConstraintLayout> workoutViews = createWorkoutViews(availableWorkouts, toEnable);
                     LinearLayout workoutLayoutView = findViewById(R.id.workoutListLinearLayout);
 
                     workoutLayoutView.addView(getWorkoutListHeader());
 
 
-                    for(HorizontalScrollView v : workoutViews){
+                    for(ConstraintLayout v : workoutViews){
                         Log.d(this.getClass().toString(), "Adding workoutScrollview to workoutLayout view");
                         workoutLayoutView.addView(v);
                     }
@@ -92,9 +93,11 @@ public class WorkoutLogMenuActivity extends AppCompatActivity
                 .subscribe();
     }
 
-    public LinearLayout getWorkoutListHeader(){
-        LinearLayout workoutListHeaderRow = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.workout_list_row, null);
+    public ConstraintLayout getWorkoutListHeader(){
+        ConstraintLayout workoutListHeaderRow = (ConstraintLayout) LayoutInflater.from(this).inflate(R.layout.workout_list_row, null);
         workoutListHeaderRow.setFocusable(false);
+        workoutListHeaderRow.setBackgroundColor(getResources().getColor(R.color.light_goldenrod_yellow));
+
         TextView workoutNameHeaderTextView = (TextView) workoutListHeaderRow.getChildAt(0);
         workoutNameHeaderTextView.setText("Workout Name");
         workoutNameHeaderTextView.setFocusable(false);
@@ -114,62 +117,60 @@ public class WorkoutLogMenuActivity extends AppCompatActivity
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    public List<HorizontalScrollView> createWorkoutViews(Map<String, Workout> workoutsMap, List<Button> toReady){
-        ArrayList<HorizontalScrollView> views = new ArrayList<>();
+    public List<ConstraintLayout> createWorkoutViews(Map<String, Workout> workoutsMap, List<Button> toReady){
+        ArrayList<ConstraintLayout> views = new ArrayList<>();
         for(Map.Entry<String, Workout> entry: workoutsMap.entrySet()) {
-            HorizontalScrollView workoutContainer = new HorizontalScrollView(this);
-            workoutContainer.setFocusable(true);
-            workoutContainer.setFocusableInTouchMode(true);
             Workout workout = entry.getValue();
 
-            LinearLayout workoutListRow = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.workout_list_row, null);
+            ConstraintLayout workoutListRow = (ConstraintLayout) LayoutInflater.from(this).inflate(R.layout.workout_list_row, null);
+            workoutListRow.setFocusable(true);
+            workoutListRow.setFocusableInTouchMode(true);
+            workoutListRow.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.workout_list_border, null));
 
             TextView workoutNameTextView = (TextView) workoutListRow.getChildAt(0);
-            workoutNameTextView.setText(createLabelFromWorkout(workout));
+            workoutNameTextView.setText(workout.workoutName);
             workoutNameTextView.setTag(R.id.workout_name_key);
             workoutNameTextView.setTag(R.id.workout_uuid, workout.workoutUUID);
             workoutNameTextView.setFocusable(false);
-            workoutNameTextView.setTextSize(getResources().getDimension(R.dimen.workout_list_header_text_size));
+            workoutNameTextView.setTextSize(getResources().getDimension(R.dimen.workout_list_row_text_size));
 
             TextView workoutStartDateTextView = (TextView) workoutListRow.getChildAt(1);
             workoutStartDateTextView.setText(DateFormat.getDateFormat(this).format(workout.startDate));
             workoutStartDateTextView.setFocusable(false);
-            workoutStartDateTextView.setTextSize(getResources().getDimension(R.dimen.workout_list_header_text_size));
+            workoutStartDateTextView.setTextSize(getResources().getDimension(R.dimen.workout_list_row_text_size));
 
             if(workout.endDate != null) {
                 Log.i("WorkoutDate", "+++++++++++++++++" + workout.endDate.toString());
                 TextView workoutEndDateTextView = (TextView) workoutListRow.getChildAt(2);
                 workoutEndDateTextView.setText(DateFormat.getDateFormat(this).format(workout.endDate));
                 workoutEndDateTextView.setFocusable(false);
-                workoutEndDateTextView.setTextSize(getResources().getDimension(R.dimen.workout_list_header_text_size));
+                workoutEndDateTextView.setTextSize(getResources().getDimension(R.dimen.workout_list_row_text_size));
             }
 
-            workoutContainer.addView(workoutListRow);
-
-            workoutContainer.setOnTouchListener((v, ev) -> {
+            workoutListRow.setOnTouchListener((v, ev) -> {
                 Log.i(this.getClass().toString(), "workoutContainer touched......");
-                workoutContainer.requestFocus();
+                workoutListRow.requestFocus();
                 return true;
             });
 
-            workoutContainer.setOnFocusChangeListener((v, hasFocus) -> {
+            workoutListRow.setOnFocusChangeListener((v, hasFocus) -> {
                 if(hasFocus){
-                    v.setBackgroundColor(getResources().getColor(R.color.black_coral));
+                    v.setBackground((ResourcesCompat.getDrawable(getResources(), R.drawable.workout_list_selected_icon, null)));
                     for(Button b: toReady){
                         b.setEnabled(true);
                     }
-                    Log.d(this.getClass().toString(), "workoutContainer has focus");
+                    Log.d(this.getClass().toString(), "workoutListRow has focus");
                 }
                 else {
-                    v.setBackgroundColor(getResources().getColor(R.color.white));
-                    Log.d(this.getClass().toString(), "workoutContainer doesn't have focus");
+                    v.setBackground((ResourcesCompat.getDrawable(getResources(), R.drawable.workout_list_border, null)));
+                    Log.d(this.getClass().toString(), "workoutListRow doesn't have focus");
                 }
             });
-            workoutContainer.setOnClickListener(v -> {
-                Log.d(this.getClass().toString(), "workoutContainer clicked.....");
+            workoutListRow.setOnClickListener(v -> {
+                Log.d(this.getClass().toString(), "workoutListRow clicked.....");
             });
 
-            views.add(workoutContainer);
+            views.add(workoutListRow);
         }
         return views;
     }
@@ -287,13 +288,6 @@ public class WorkoutLogMenuActivity extends AppCompatActivity
 
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {}
-
-    private String createLabelFromWorkout(Workout workout){
-        if(workout.endDate == null)
-            return "* " + workout.workoutName;
-        else
-            return workout.workoutName;
-    }
 
     private Map<String, Workout> createUUIDToWorkoutMapping(List<Workout> workouts){
         HashMap<String, Workout> workoutMapping = new HashMap<>();
