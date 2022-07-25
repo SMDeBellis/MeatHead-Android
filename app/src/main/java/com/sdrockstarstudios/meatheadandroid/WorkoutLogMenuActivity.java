@@ -67,9 +67,6 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
                     List<ConstraintLayout> workoutViews = createWorkoutViews(availableWorkouts, toEnable);
                     LinearLayout workoutLayoutView = findViewById(R.id.workoutListLinearLayout);
 
-                    workoutLayoutView.addView(getWorkoutListHeader());
-
-
                     for(ConstraintLayout v : workoutViews){
                         Log.d(this.getClass().toString(), "Adding workoutScrollview to workoutLayout view");
                         workoutLayoutView.addView(v);
@@ -88,29 +85,6 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
                     copyWorkoutButton.setEnabled(false);
                 })
                 .subscribe();
-    }
-
-    public ConstraintLayout getWorkoutListHeader(){
-        ConstraintLayout workoutListHeaderRow = (ConstraintLayout) LayoutInflater.from(this).inflate(R.layout.workout_list_row, null);
-        workoutListHeaderRow.setFocusable(false);
-        workoutListHeaderRow.setBackgroundColor(getResources().getColor(R.color.light_goldenrod_yellow));
-
-        TextView workoutNameHeaderTextView = (TextView) workoutListHeaderRow.getChildAt(0);
-        workoutNameHeaderTextView.setText("Workout Name");
-        workoutNameHeaderTextView.setFocusable(false);
-        workoutNameHeaderTextView.setTextSize(getResources().getDimension(R.dimen.workout_list_header_text_size));
-
-        TextView workoutStartDateHeaderTextView = (TextView) workoutListHeaderRow.getChildAt(1);
-        workoutStartDateHeaderTextView.setText("Start Date");
-        workoutStartDateHeaderTextView.setFocusable(false);
-        workoutStartDateHeaderTextView.setTextSize(getResources().getDimension(R.dimen.workout_list_header_text_size));
-
-        TextView workoutEndDateHeaderTextView = (TextView) workoutListHeaderRow.getChildAt(2);
-        workoutEndDateHeaderTextView.setText("End Date");
-        workoutEndDateHeaderTextView.setFocusable(false);
-        workoutEndDateHeaderTextView.setTextSize(getResources().getDimension(R.dimen.workout_list_header_text_size));
-
-        return workoutListHeaderRow;
     }
 
     @SuppressLint("ClickableViewAccessibility")
