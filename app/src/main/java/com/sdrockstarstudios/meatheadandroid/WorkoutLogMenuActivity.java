@@ -26,6 +26,7 @@ import com.sdrockstarstudios.meatheadandroid.model.tables.Workout;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -90,9 +91,11 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
     @SuppressLint("ClickableViewAccessibility")
     public List<ConstraintLayout> createWorkoutViews(Map<String, Workout> workoutsMap, List<Button> toReady){
         ArrayList<ConstraintLayout> views = new ArrayList<>();
-        for(Map.Entry<String, Workout> entry: workoutsMap.entrySet()) {
-            Workout workout = entry.getValue();
 
+        List<Workout> workouts = new ArrayList<>(workoutsMap.values());
+        Collections.sort(workouts, (x, y) -> (int) (x.startDate.getTime() - y.startDate.getTime()));
+
+        for(Workout workout: workouts) {
             ConstraintLayout workoutListRow = (ConstraintLayout) LayoutInflater.from(this).inflate(R.layout.workout_list_row, null);
             workoutListRow.setFocusable(true);
             workoutListRow.setFocusableInTouchMode(true);
