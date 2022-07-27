@@ -1,5 +1,6 @@
 package com.sdrockstarstudios.meatheadandroid;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -42,10 +44,43 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
 
     private Map<String, Workout> availableWorkouts;
 
+    final private String SELECTED_HEADER_ORDER_BY_KEY = "selected-header-order-by-key";
+    final private String WORKOUT_NAME_REVERSED_KEY = "workout-name-reversed-key";
+    final private String WORKOUT_START_DATE_REVERSED_KEY = "workout-start-date-reversed-key";
+    final private String WORKOUT_END_DATE_REVERSED_KEY = "workout-end-date-reversed-key";
+
+    private String orderBy = "workout-name";
+    private boolean workoutNameReversed = false;
+    private boolean startDateReveresed = false;
+    private boolean endDateReversed = false;
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(SELECTED_HEADER_ORDER_BY_KEY, orderBy);
+        outState.putBoolean(WORKOUT_NAME_REVERSED_KEY, workoutNameReversed);
+        outState.putBoolean(WORKOUT_START_DATE_REVERSED_KEY, startDateReveresed);
+        outState.putBoolean(WORKOUT_END_DATE_REVERSED_KEY, endDateReversed);
+    }
+
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        orderBy = savedInstanceState.getString(SELECTED_HEADER_ORDER_BY_KEY);
+        workoutNameReversed = savedInstanceState.getBoolean(WORKOUT_NAME_REVERSED_KEY);
+        startDateReveresed = savedInstanceState.getBoolean(WORKOUT_START_DATE_REVERSED_KEY);
+        endDateReversed = savedInstanceState.getBoolean(WORKOUT_END_DATE_REVERSED_KEY);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout_log_menu);
+        updateWorkoutList();
+    }
+
+    private void updateWorkoutList(){
         Button loadWorkoutButton = findViewById(R.id.loadWorkoutButton);
         loadWorkoutButton.setOnClickListener(this::pressLoadWorkoutButton);
         loadWorkoutButton.setEnabled(false);
@@ -61,15 +96,15 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
                 .doOnSuccess(list -> {
                     availableWorkouts = createUUIDToWorkoutMapping(list);
                     if(availableWorkouts.isEmpty()) {
-                        loadWorkoutButton.setVisibility(View.GONE);
-                        copyWorkoutButton.setVisibility(View.GONE);
+                        for(Button b: toEnable)
+                            b.setVisibility(View.GONE);
                     }
                     Log.d(this.getClass().toString(), "creatingWorkoutViews");
-                    List<ConstraintLayout> workoutViews = createWorkoutViews(availableWorkouts, toEnable);
+                    List<ConstraintLayout> workoutViews = createWorkoutViews(orderWorkoutsList(), toEnable);
                     LinearLayout workoutLayoutView = findViewById(R.id.workoutListLinearLayout);
+                    workoutLayoutView.removeAllViews();
 
                     for(ConstraintLayout v : workoutViews){
-                        Log.d(this.getClass().toString(), "Adding workoutScrollview to workoutLayout view");
                         workoutLayoutView.addView(v);
                     }
                     workoutLayoutView.setOnFocusChangeListener((v, hasFocus) -> {
@@ -82,18 +117,15 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
                     });
                 })
                 .doOnError(error -> {
-                    loadWorkoutButton.setEnabled(false);
-                    copyWorkoutButton.setEnabled(false);
+                    for(Button b: toEnable)
+                        b.setEnabled(false);
                 })
                 .subscribe();
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    public List<ConstraintLayout> createWorkoutViews(Map<String, Workout> workoutsMap, List<Button> toReady){
+    public List<ConstraintLayout> createWorkoutViews(List<Workout> workouts, List<Button> toReady){
         ArrayList<ConstraintLayout> views = new ArrayList<>();
-
-        List<Workout> workouts = new ArrayList<>(workoutsMap.values());
-        Collections.sort(workouts, (x, y) -> (int) (x.startDate.getTime() - y.startDate.getTime()));
 
         for(Workout workout: workouts) {
             ConstraintLayout workoutListRow = (ConstraintLayout) LayoutInflater.from(this).inflate(R.layout.workout_list_row, null);
@@ -114,7 +146,6 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
             workoutStartDateTextView.setTextSize(getResources().getDimension(R.dimen.workout_list_row_text_size));
 
             if(workout.endDate != null) {
-                Log.i("WorkoutDate", "+++++++++++++++++" + workout.endDate.toString());
                 TextView workoutEndDateTextView = (TextView) workoutListRow.getChildAt(2);
                 workoutEndDateTextView.setText(DateFormat.getDateFormat(this).format(workout.endDate));
                 workoutEndDateTextView.setFocusable(false);
@@ -231,6 +262,50 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
             Log.i("pressLoadButton", "v is null");
     }
 
+    private List<Workout> orderWorkoutsList(){
+        if(orderBy.equals("workout-name"))
+            return orderWorkoutsByWorkoutName(workoutNameReversed);
+        else if(orderBy.equals("start-date")){
+            return orderWorkoutsByStartDate(startDateReveresed);
+        }
+        else if(orderBy.equals("end-date")){
+            return orderWorkoutsByEndDate(endDateReversed);
+        }
+        else{
+            return new ArrayList<>(availableWorkouts.values());
+        }
+    }
+
+    private List<Workout> orderWorkoutsByWorkoutName(boolean reversed){
+        List<Workout> workouts = new ArrayList<>(availableWorkouts.values());
+        Collections.sort(workouts, (x,y) -> x.workoutName.compareTo(y.workoutName));
+        if(reversed)
+            Collections.reverse(workouts);
+        return workouts;
+    }
+
+    private List<Workout> orderWorkoutsByStartDate(boolean reversed){
+        List<Workout> workouts = new ArrayList<>(availableWorkouts.values());
+        Collections.sort(workouts, (x, y) -> (int) (x.startDate.getTime() - y.startDate.getTime()));
+        if(reversed)
+            Collections.reverse(workouts);
+        return workouts;
+    }
+
+    private List<Workout> orderWorkoutsByEndDate(boolean reversed){
+        List<Workout> workouts = new ArrayList<>(availableWorkouts.values());
+        Collections.sort(workouts, (x, y) -> {
+            if(x.endDate == null)
+                return 1;
+            if(y.endDate == null)
+                return - 1;
+            return (int) (x.endDate.getTime() - y.endDate.getTime());
+        });
+        if(reversed)
+            Collections.reverse(workouts);
+        return workouts;
+    }
+
     private void onAddWorkoutDialogPositiveClick(DialogFragment dialog){
         EditText workoutNameEditText = dialog.getDialog().findViewById(R.id.workout_name_entry);
         String workoutName = workoutNameEditText.getText().toString();
@@ -258,6 +333,24 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
     public void onDialogPositiveClick(DialogFragment dialog) {
         if(dialog instanceof AddWorkoutDialogFragment)
             onAddWorkoutDialogPositiveClick(dialog);
+    }
+
+    public void clickSortByWorkoutName(View v){
+        orderBy = "workout-name";
+        workoutNameReversed = !workoutNameReversed;
+        updateWorkoutList();
+    }
+
+    public void clickSortByStartDate(View v){
+        orderBy = "start-date";
+        startDateReveresed = !startDateReveresed;
+        updateWorkoutList();
+    }
+
+    public void clickSortByEndDate(View v){
+        orderBy = "end-date";
+        endDateReversed = !endDateReversed;
+        updateWorkoutList();
     }
 
     @Override
