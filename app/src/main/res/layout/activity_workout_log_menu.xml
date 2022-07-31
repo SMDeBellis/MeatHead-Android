@@ -26,10 +26,10 @@
         android:layout_marginEnd="10dp"
         android:layout_marginTop="12dp"
         android:background="@drawable/workout_list_header_background"
-        app:layout_constraintEnd_toStartOf="@+id/workoutListScrollView"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintStart_toStartOf="@+id/workoutListScrollView"
-        app:layout_constraintEnd_toEndOf="@+id/workoutListScrollView">
+        app:layout_constraintEnd_toStartOf="@id/workoutListScrollView"
+        app:layout_constraintTop_toBottomOf="@id/textView"
+        app:layout_constraintStart_toStartOf="@id/workoutListScrollView"
+        app:layout_constraintEnd_toEndOf="@id/workoutListScrollView">
 
         <TextView
             android:id="@+id/workoutNameHeaderTextView"
@@ -42,7 +42,7 @@
             android:tag="@string/workout_name"
             android:onClick="clickSortByWorkoutName"
             app:layout_constrainedWidth="true"
-            app:layout_constraintEnd_toEndOf="@+id/guideline5"
+            app:layout_constraintEnd_toEndOf="@id/guideline5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -57,8 +57,8 @@
             android:tag="@string/start_date"
             android:onClick="clickSortByStartDate"
             app:layout_constrainedWidth="true"
-            app:layout_constraintEnd_toEndOf="@+id/guideline6"
-            app:layout_constraintStart_toStartOf="@+id/guideline5"
+            app:layout_constraintEnd_toEndOf="@id/guideline6"
+            app:layout_constraintStart_toStartOf="@id/guideline5"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -73,7 +73,7 @@
             android:onClick="clickSortByEndDate"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline6"
+            app:layout_constraintStart_toStartOf="@id/guideline6"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.Guideline
@@ -102,11 +102,11 @@
         android:layout_marginBottom="12dp"
         android:background="@color/white"
         android:contentDescription="Layout to hold the list of workouts."
-        app:layout_constraintBottom_toTopOf="@+id/newWorkoutButton"
+        app:layout_constraintBottom_toTopOf="@id/newWorkoutButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/headerConstraintLayout"
+        app:layout_constraintTop_toBottomOf="@id/headerConstraintLayout"
         app:layout_constraintVertical_bias="0.0">
 
         <LinearLayout
