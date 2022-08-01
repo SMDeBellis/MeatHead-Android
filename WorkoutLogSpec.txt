@@ -54,3 +54,14 @@ Issues to fix:
 - move hard coded dimensions and text into resource files.
 
 - fix dialog formatting for older versions or increase min supported android value.
+
+
+Pre-Planned workout:
+    - allow user to create a workout ahead of time:
+        - a workout will be created without a start date.
+        - pre planned workouts won't show on workouts list
+        - pre planned workouts will have their own activity and list
+        - pre planned workouts can be created, loaded, and copied.
+        - loaded pre planned workouts will be able to be copied.
+        - copied pre planned workouts will be a new workout with a start date.
+
