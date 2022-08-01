@@ -268,8 +268,7 @@ public class WorkoutLogActivity extends AppCompatActivity
         }
     }
 
-
-
+    
     private View buildExistingExerciseView(ExerciseAndSets exerciseAndSets, boolean editable){
         TextView exerciseLabelTextView = buildExerciseLabelTextView(exerciseAndSets.exercise.exerciseName);
 
@@ -280,7 +279,7 @@ public class WorkoutLogActivity extends AppCompatActivity
 
         // container for [LinearLayoutHor[weightxreps, add button]]
         HorizontalScrollView horScrollView = new HorizontalScrollView(this);
-        horScrollView.postDelayed(() -> horScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT), 110L);
+//        horScrollView.postDelayed(() -> horScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT), 110L);
 
         LinearLayout horScrollViewLinearLayout = new LinearLayout(this);
         horScrollViewLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -288,10 +287,11 @@ public class WorkoutLogActivity extends AppCompatActivity
         UUID exerciseUUID = UUID.fromString(exerciseAndSets.exercise.exerciseUUID);
         horScrollViewLinearLayout.setTag(exerciseUUID);
 
-        if(editable){
-            Button addSetButton = (Button) LayoutInflater.from(this).inflate(R.layout.add_set_button, null);
+        Button addSetButton = (Button) LayoutInflater.from(this).inflate(R.layout.add_set_button, null);
+        exerciseContainer.addView(addSetButton);
 
-            exerciseContainer.addView(addSetButton);;
+        if(editable){
+
             addSetButton.setOnClickListener(v -> {
                 viewToModify = horScrollViewLinearLayout;
                 addSet(exerciseAndSets.exercise.repsOnly);
@@ -303,6 +303,7 @@ public class WorkoutLogActivity extends AppCompatActivity
             });
         }
         else{
+            addSetButton.setVisibility(View.INVISIBLE);
             exerciseLabelTextView.setOnLongClickListener(v -> {
                 Toast.makeText(this, "Workout not editable", Toast.LENGTH_SHORT).show();
                 return false;
@@ -342,7 +343,7 @@ public class WorkoutLogActivity extends AppCompatActivity
 
         // container for [LinearLayoutHor[weightxreps, add button]]
         HorizontalScrollView horScrollView = new HorizontalScrollView(this);
-        horScrollView.postDelayed(() -> horScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT), 110L);
+        //horScrollView.postDelayed(() -> horScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT), 110L);
 
         LinearLayout horScrollViewLinearLayout = new LinearLayout(this);
         horScrollViewLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
