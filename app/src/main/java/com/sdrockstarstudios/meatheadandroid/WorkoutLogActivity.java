@@ -268,7 +268,6 @@ public class WorkoutLogActivity extends AppCompatActivity
         }
     }
 
-    
     private View buildExistingExerciseView(ExerciseAndSets exerciseAndSets, boolean editable){
         TextView exerciseLabelTextView = buildExerciseLabelTextView(exerciseAndSets.exercise.exerciseName);
 
