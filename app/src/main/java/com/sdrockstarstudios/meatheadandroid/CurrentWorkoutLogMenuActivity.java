@@ -75,7 +75,7 @@ public class CurrentWorkoutLogMenuActivity extends AppCompatActivity implements 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_workout_log_menu);
+        setContentView(R.layout.activity_current_workout_log_menu);
         updateWorkoutList();
     }
 
