@@ -315,6 +315,7 @@ public class CurrentWorkoutLogMenuActivity extends AppCompatActivity implements 
         workout.startDate = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()).getTime();
         workout.workoutUUID = uuid;
         workout.workoutName = workoutName;
+        workout.preplanned = false;
         AppDatabase.getInstance(getApplicationContext()).workoutDao().insert(workout)
                 .subscribeOn(Schedulers.io())
                 .doOnError(error -> Toast.makeText(getApplicationContext(), "Error inserting workout: " + workoutName + " in database.", Toast.LENGTH_SHORT))

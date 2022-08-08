@@ -8,7 +8,6 @@ import androidx.room.TypeConverters;
 
 import com.sdrockstarstudios.meatheadandroid.model.converters.DateConverter;
 
-import java.util.Calendar;
 import java.util.Date;
 
 @Entity(tableName = "workout")
@@ -28,4 +27,8 @@ public class Workout {
 
     @ColumnInfo(name = "workoutName", defaultValue = "")
     public String workoutName;
+
+    @NonNull
+    @ColumnInfo(name = "preplanned", defaultValue = "0")
+    public Boolean preplanned = false;
 }
