@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Checkable;
@@ -80,7 +81,6 @@ public class PreplannedWorkoutActivity extends AppCompatActivity implements AddE
 
     private TextView buildExerciseLabelTextView(String exerciseName){
         TextView exerciseLabelTextView = new TextView(this);
-        exerciseLabelTextView.setTag(EXERCISE_NAME_TEXT_VIEW_TAG);
         exerciseLabelTextView.setText(exerciseName);
         exerciseLabelTextView.setTextSize(25);
         exerciseLabelTextView.setPadding(5,
