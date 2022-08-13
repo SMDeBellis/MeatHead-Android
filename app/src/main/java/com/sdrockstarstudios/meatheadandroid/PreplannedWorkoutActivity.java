@@ -21,6 +21,8 @@ import com.sdrockstarstudios.meatheadandroid.model.relations.ExerciseAndSets;
 import com.sdrockstarstudios.meatheadandroid.model.relations.WorkoutAndExercises;
 import com.sdrockstarstudios.meatheadandroid.model.tables.Exercise;
 
+import java.util.UUID;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
@@ -144,7 +146,7 @@ public class PreplannedWorkoutActivity extends AppCompatActivity implements AddE
         //add exercise to DB
         Exercise exercise = new Exercise();
         exercise.exerciseName = exerciseName;
-        exercise.exerciseUUID = newExercise.getTag().toString();
+        exercise.exerciseUUID = UUID.randomUUID().toString();
         exercise.parentWorkoutUUID = workoutUUID;
         exercise.repsOnly = repsOnly;
         AppDatabase.getInstance(getApplicationContext()).exerciseDoa().insert(exercise)
