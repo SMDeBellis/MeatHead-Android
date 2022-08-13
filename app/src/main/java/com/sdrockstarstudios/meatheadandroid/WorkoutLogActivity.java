@@ -102,7 +102,7 @@ public class WorkoutLogActivity extends AppCompatActivity
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError(error -> Toast.makeText(this, "Error ending workout.", Toast.LENGTH_SHORT))
                 .doOnComplete(() -> {
-                    Intent intent = new Intent(this, WorkoutLogMenuActivity.class);
+                    Intent intent = new Intent(this, CurrentWorkoutLogMenuActivity.class);
                     startActivity(intent);
                 })
                 .subscribe();

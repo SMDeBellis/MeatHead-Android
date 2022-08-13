@@ -1,8 +1,6 @@
 package com.sdrockstarstudios.meatheadandroid;
 
-import androidx.test.espresso.DataInteraction;
 import androidx.test.espresso.ViewInteraction;
-import androidx.test.espresso.intent.Intents;
 import androidx.test.espresso.intent.rule.IntentsTestRule;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import static androidx.test.espresso.intent.Intents.intended;
@@ -17,7 +15,6 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.*;
 import static androidx.test.espresso.assertion.ViewAssertions.*;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static androidx.test.espresso.matcher.ViewMatchers.*;
 
 
@@ -50,7 +47,7 @@ public class MainMenuTest {
         ViewInteraction workoutsButton = onView(allOf(withText("Workouts"), isDisplayed()));
         workoutsButton.perform(click());
 
-        intended(hasComponent(WorkoutLogMenuActivity.class.getName()));
+        intended(hasComponent(CurrentWorkoutLogMenuActivity.class.getName()));
     }
 
     @Test

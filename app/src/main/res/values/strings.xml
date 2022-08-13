@@ -2,8 +2,11 @@
     <string name="app_name">MeatHeadAndroid</string>
     <string name="edit_message">Enter a message</string>
     <string name="workout_log_header">Workout Log</string>
+    <string name="workout_planning_header">Workout Planning</string>
     <string name="add_exercise_button_text">Add Exercise</string>
+    <string name="save_workout_button_text">Save Workout</string>
     <string name="exercise_name">Exercise Name</string>
+    <string name="exercises_label">Exercises</string>
     <string name="sets">Sets</string>
     <string name="workout_name">Workout Name</string>
     <string name="add_dialog_accept">Add</string>

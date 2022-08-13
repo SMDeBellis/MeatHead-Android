@@ -18,12 +18,19 @@ import io.reactivex.Single;
 
 @Dao
 public interface WorkoutDao {
-    @Query("SELECT * FROM workout")
+    @Query("SELECT * FROM workout WHERE workout.preplanned = 0")
     Single<List<Workout>> getAllWorkouts();
 
+    @Query("SELECT * FROM workout WHERE workout.preplanned = 1")
+    Single<List<Workout>> getAllPreplannedWorkouts();
+
     @Transaction
-    @Query("SELECT * FROM workout INNER JOIN exercise ON workout.workoutUUID = exercise.parentWorkoutUUID WHERE exercise.exerciseName = (:exerciseName)")
+    @Query("SELECT * FROM workout INNER JOIN exercise ON workout.workoutUUID = exercise.parentWorkoutUUID WHERE exercise.exerciseName = (:exerciseName) AND workout.preplanned = 0")
     Single<List<WorkoutAndExercises>> getAllWorkoutsWithExercise(String exerciseName);
+
+    @Transaction
+    @Query("SELECT * FROM workout INNER JOIN exercise ON workout.workoutUUID = exercise.parentWorkoutUUID WHERE exercise.exerciseName = (:exerciseName) AND workout.preplanned = 1")
+    Single<List<WorkoutAndExercises>> getAllPreplannedWorkoutsWithExercise(String exerciseName);
 
     @Transaction
     @Query("SELECT * FROM workout WHERE workoutUUID = (:uuid)")

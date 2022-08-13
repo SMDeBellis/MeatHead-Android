@@ -4,10 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-
-import com.sdrockstarstudios.meatheadandroid.model.AppDatabase;
 
 public class MainMenuActivity extends AppCompatActivity {
 
@@ -18,7 +15,12 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     public void pressWorkoutsButton(View view){
-        Intent workoutLogIntent = new Intent(this, WorkoutLogMenuActivity.class);
+        Intent workoutLogIntent = new Intent(this, CurrentWorkoutLogMenuActivity.class);
         startActivity(workoutLogIntent);
+    }
+
+    public void pressPlanningButton(View view){
+        Intent preplannedWorkoutIntent = new Intent(this, PreplannedWorkoutLogMenuActivity.class);
+        startActivity(preplannedWorkoutIntent);
     }
 }

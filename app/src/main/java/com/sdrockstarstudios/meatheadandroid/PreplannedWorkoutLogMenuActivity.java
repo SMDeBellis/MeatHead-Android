@@ -1,11 +1,5 @@
 package com.sdrockstarstudios.meatheadandroid;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.fragment.app.DialogFragment;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +12,11 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.fragment.app.DialogFragment;
 
 import com.sdrockstarstudios.meatheadandroid.model.AppDatabase;
 import com.sdrockstarstudios.meatheadandroid.model.relations.ExerciseAndSets;
@@ -39,43 +38,17 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWorkoutDialogFragment.NoticeDialogListener{
+public class PreplannedWorkoutLogMenuActivity extends AppCompatActivity implements AddWorkoutDialogFragment.NoticeDialogListener {
 
     private Map<String, Workout> availableWorkouts;
-
-    final private String SELECTED_HEADER_ORDER_BY_KEY = "selected-header-order-by-key";
-    final private String WORKOUT_NAME_REVERSED_KEY = "workout-name-reversed-key";
-    final private String WORKOUT_START_DATE_REVERSED_KEY = "workout-start-date-reversed-key";
-    final private String WORKOUT_END_DATE_REVERSED_KEY = "workout-end-date-reversed-key";
-
     private String orderBy = "workout-name";
     private boolean workoutNameReversed = false;
-    private boolean startDateReveresed = false;
-    private boolean endDateReversed = false;
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(SELECTED_HEADER_ORDER_BY_KEY, orderBy);
-        outState.putBoolean(WORKOUT_NAME_REVERSED_KEY, workoutNameReversed);
-        outState.putBoolean(WORKOUT_START_DATE_REVERSED_KEY, startDateReveresed);
-        outState.putBoolean(WORKOUT_END_DATE_REVERSED_KEY, endDateReversed);
-    }
-
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        orderBy = savedInstanceState.getString(SELECTED_HEADER_ORDER_BY_KEY);
-        workoutNameReversed = savedInstanceState.getBoolean(WORKOUT_NAME_REVERSED_KEY);
-        startDateReveresed = savedInstanceState.getBoolean(WORKOUT_START_DATE_REVERSED_KEY);
-        endDateReversed = savedInstanceState.getBoolean(WORKOUT_END_DATE_REVERSED_KEY);
-    }
+    private boolean creationDateReveresed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_workout_log_menu);
+        setContentView(R.layout.activity_preplanned_workout_log_menu);
         updateWorkoutList();
     }
 
@@ -89,7 +62,7 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
 
         List<Button> toEnable = Arrays.asList(loadWorkoutButton, copyWorkoutButton);
 
-        Disposable d = AppDatabase.getInstance(getApplicationContext()).workoutDao().getAllWorkouts()
+        Disposable d = AppDatabase.getInstance(getApplicationContext()).workoutDao().getAllPreplannedWorkouts()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess(list -> {
@@ -179,6 +152,40 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
         return views;
     }
 
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        if(dialog instanceof AddWorkoutDialogFragment)
+            onAddWorkoutDialogPositiveClick(dialog);
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {}
+
+    private void onAddWorkoutDialogPositiveClick(DialogFragment dialog){
+        EditText workoutNameEditText = dialog.getDialog().findViewById(R.id.workout_name_entry);
+        String workoutName = workoutNameEditText.getText().toString();
+        String uuid = UUID.randomUUID().toString();
+
+        // insert workout into database
+        Workout workout = new Workout();
+        workout.startDate = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()).getTime();
+        workout.workoutUUID = uuid;
+        workout.workoutName = workoutName;
+        workout.preplanned = true;
+
+        AppDatabase.getInstance(getApplicationContext()).workoutDao().insert(workout)
+                .subscribeOn(Schedulers.io())
+                .doOnError(error -> Toast.makeText(getApplicationContext(), "Error inserting workout: " + workoutName + " in database.", Toast.LENGTH_SHORT))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+
+        Intent intent = new Intent(this, PreplannedWorkoutActivity.class);
+        intent.putExtra(WorkoutLogActivity.WORKOUT_NAME_KEY, workoutName);
+        intent.putExtra(WorkoutLogActivity.WORKOUT_UUID_KEY, uuid);
+        intent.putExtra(WorkoutLogActivity.WORKOUT_START_DATE_KEY, workout.startDate.getTime());
+        startActivity(intent);
+    }
+
     public void pressNewWorkoutButton(View view){
         DialogFragment newFragment = new AddWorkoutDialogFragment();
         newFragment.show(getSupportFragmentManager(), "addWorkout");
@@ -190,7 +197,7 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
         if(v != null) {
             Log.i("pressLoadButton", v.toString());
             String selectedWorkout = (String) (v.findViewWithTag(R.id.workout_name_key)).getTag(R.id.workout_uuid);
-            Intent intent = new Intent(this, WorkoutLogActivity.class);
+            Intent intent = new Intent(this, PreplannedWorkoutActivity.class);
             Workout workout = availableWorkouts.get(selectedWorkout);
             assert workout != null;
             intent.putExtra(WorkoutLogActivity.WORKOUT_UUID_KEY, workout.workoutUUID);
@@ -247,7 +254,7 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
                         .subscribe();
 
 
-                Intent intent = new Intent(this, WorkoutLogActivity.class);
+                Intent intent = new Intent(this, PreplannedWorkoutActivity.class);
                 intent.putExtra(WorkoutLogActivity.WORKOUT_NAME_KEY, workoutName);
                 intent.putExtra(WorkoutLogActivity.WORKOUT_UUID_KEY, uuid);
                 intent.putExtra(WorkoutLogActivity.WORKOUT_START_DATE_KEY, workout.startDate.getTime());
@@ -264,11 +271,8 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
     private List<Workout> orderWorkoutsList(){
         if(orderBy.equals("workout-name"))
             return orderWorkoutsByWorkoutName(workoutNameReversed);
-        else if(orderBy.equals("start-date")){
-            return orderWorkoutsByStartDate(startDateReveresed);
-        }
-        else if(orderBy.equals("end-date")){
-            return orderWorkoutsByEndDate(endDateReversed);
+        else if(orderBy.equals("creation-date")){
+            return orderWorkoutsByCreationDate(creationDateReveresed);
         }
         else{
             return new ArrayList<>(availableWorkouts.values());
@@ -277,13 +281,13 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
 
     private List<Workout> orderWorkoutsByWorkoutName(boolean reversed){
         List<Workout> workouts = new ArrayList<>(availableWorkouts.values());
-        Collections.sort(workouts, (x,y) -> x.workoutName.compareTo(y.workoutName));
+        Collections.sort(workouts, (x, y) -> x.workoutName.compareTo(y.workoutName));
         if(reversed)
             Collections.reverse(workouts);
         return workouts;
     }
 
-    private List<Workout> orderWorkoutsByStartDate(boolean reversed){
+    private List<Workout> orderWorkoutsByCreationDate(boolean reversed){
         List<Workout> workouts = new ArrayList<>(availableWorkouts.values());
         Collections.sort(workouts, (x, y) -> (int) (x.startDate.getTime() - y.startDate.getTime()));
         if(reversed)
@@ -305,55 +309,7 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
         return workouts;
     }
 
-    private void onAddWorkoutDialogPositiveClick(DialogFragment dialog){
-        EditText workoutNameEditText = dialog.getDialog().findViewById(R.id.workout_name_entry);
-        String workoutName = workoutNameEditText.getText().toString();
-        String uuid = UUID.randomUUID().toString();
 
-        // insert workout into database
-        Workout workout = new Workout();
-        workout.startDate = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()).getTime();
-        workout.workoutUUID = uuid;
-        workout.workoutName = workoutName;
-        AppDatabase.getInstance(getApplicationContext()).workoutDao().insert(workout)
-                .subscribeOn(Schedulers.io())
-                .doOnError(error -> Toast.makeText(getApplicationContext(), "Error inserting workout: " + workoutName + " in database.", Toast.LENGTH_SHORT))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
-
-        Intent intent = new Intent(this, WorkoutLogActivity.class);
-        intent.putExtra(WorkoutLogActivity.WORKOUT_NAME_KEY, workoutName);
-        intent.putExtra(WorkoutLogActivity.WORKOUT_UUID_KEY, uuid);
-        intent.putExtra(WorkoutLogActivity.WORKOUT_START_DATE_KEY, workout.startDate.getTime());
-        startActivity(intent);
-    }
-
-    @Override // needs to handle the LoadWorkoutDialogFragment
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        if(dialog instanceof AddWorkoutDialogFragment)
-            onAddWorkoutDialogPositiveClick(dialog);
-    }
-
-    public void clickSortByWorkoutName(View v){
-        orderBy = "workout-name";
-        workoutNameReversed = !workoutNameReversed;
-        updateWorkoutList();
-    }
-
-    public void clickSortByStartDate(View v){
-        orderBy = "start-date";
-        startDateReveresed = !startDateReveresed;
-        updateWorkoutList();
-    }
-
-    public void clickSortByEndDate(View v){
-        orderBy = "end-date";
-        endDateReversed = !endDateReversed;
-        updateWorkoutList();
-    }
-
-    @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {}
 
     private Map<String, Workout> createUUIDToWorkoutMapping(List<Workout> workouts){
         HashMap<String, Workout> workoutMapping = new HashMap<>();
