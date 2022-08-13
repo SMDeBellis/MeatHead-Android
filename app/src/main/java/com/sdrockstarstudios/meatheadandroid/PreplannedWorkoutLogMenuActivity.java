@@ -197,7 +197,7 @@ public class PreplannedWorkoutLogMenuActivity extends AppCompatActivity implemen
         if(v != null) {
             Log.i("pressLoadButton", v.toString());
             String selectedWorkout = (String) (v.findViewWithTag(R.id.workout_name_key)).getTag(R.id.workout_uuid);
-            Intent intent = new Intent(this, WorkoutLogActivity.class);
+            Intent intent = new Intent(this, PreplannedWorkoutActivity.class);
             Workout workout = availableWorkouts.get(selectedWorkout);
             assert workout != null;
             intent.putExtra(WorkoutLogActivity.WORKOUT_UUID_KEY, workout.workoutUUID);
