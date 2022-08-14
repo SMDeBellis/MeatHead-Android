@@ -100,7 +100,7 @@ public class PreplannedWorkoutLogMenuActivity extends AppCompatActivity implemen
         ArrayList<ConstraintLayout> views = new ArrayList<>();
 
         for(Workout workout: workouts) {
-            ConstraintLayout workoutListRow = (ConstraintLayout) LayoutInflater.from(this).inflate(R.layout.workout_list_row, null);
+            ConstraintLayout workoutListRow = (ConstraintLayout) LayoutInflater.from(this).inflate(R.layout.preplanned_workout_list_row, null);
             workoutListRow.setFocusable(true);
             workoutListRow.setFocusableInTouchMode(true);
             workoutListRow.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.workout_list_border, null));
@@ -116,13 +116,6 @@ public class PreplannedWorkoutLogMenuActivity extends AppCompatActivity implemen
             workoutStartDateTextView.setText(DateFormat.getDateFormat(this).format(workout.startDate));
             workoutStartDateTextView.setFocusable(false);
             workoutStartDateTextView.setTextSize(getResources().getDimension(R.dimen.workout_list_row_text_size));
-
-            if(workout.endDate != null) {
-                TextView workoutEndDateTextView = (TextView) workoutListRow.getChildAt(2);
-                workoutEndDateTextView.setText(DateFormat.getDateFormat(this).format(workout.endDate));
-                workoutEndDateTextView.setFocusable(false);
-                workoutEndDateTextView.setTextSize(getResources().getDimension(R.dimen.workout_list_row_text_size));
-            }
 
             workoutListRow.setOnTouchListener((v, ev) -> {
                 Log.i(this.getClass().toString(), "workoutContainer touched......");
