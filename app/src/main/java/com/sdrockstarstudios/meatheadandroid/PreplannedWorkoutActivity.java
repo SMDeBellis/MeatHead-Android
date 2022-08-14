@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Checkable;
@@ -15,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.sdrockstarstudios.meatheadandroid.model.AppDatabase;
@@ -34,7 +37,6 @@ public class PreplannedWorkoutActivity extends AppCompatActivity implements AddE
         ExerciseInfoDialogFragment.NoticeDialogListener {
 
     public static final String WORKOUT_UUID_KEY = "workout-uuid-key";
-    public static final String EXERCISE_NAME_TEXT_VIEW_TAG = "exercise-name-text-view_key";
 
     private String workoutUUID;
 
@@ -72,9 +74,11 @@ public class PreplannedWorkoutActivity extends AppCompatActivity implements AddE
         if(!workout.exercisesAndSets.isEmpty()){
             LinearLayout exerciseLayout = findViewById(R.id.WorkoutContentLinearLayout);
             for (ExerciseAndSets exercise : workout.exercisesAndSets) {
-                TextView exerciseLabelTextView = new TextView(this);
+                ConstraintLayout exerciseNameLayout = (ConstraintLayout) LayoutInflater.from(this).inflate(R.layout.preplanned_exercise_list_row, null);
+                exerciseNameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.workout_list_border, null));
+                TextView exerciseLabelTextView = exerciseNameLayout.findViewById(R.id.preplannedExerciseNameTextView);
                 exerciseLabelTextView.setText(exercise.exercise.exerciseName);
-                exerciseLayout.addView(exerciseLabelTextView);
+                exerciseLayout.addView(exerciseNameLayout);
             }
         }
     }
@@ -135,14 +139,6 @@ public class PreplannedWorkoutActivity extends AppCompatActivity implements AddE
         Checkable repsOnlyCheckbox = dialog.getDialog().findViewById(R.id.reps_only_checkbox);
         boolean repsOnly = repsOnlyCheckbox.isChecked();
 
-        View newExercise = buildExerciseLabelTextView(exerciseName);
-        Log.i("ID CHECK", String.valueOf(newExercise.getId()));
-
-        LinearLayout exerciseLayout = findViewById(R.id.WorkoutContentLinearLayout);
-        exerciseLayout.addView(newExercise);
-        ScrollView exerciseScrollView = findViewById(R.id.exerciseEntryScrollView);
-        exerciseScrollView.postDelayed(() -> exerciseScrollView.fullScroll(ScrollView.FOCUS_DOWN), 100L);
-
         //add exercise to DB
         Exercise exercise = new Exercise();
         exercise.exerciseName = exerciseName;
@@ -153,6 +149,17 @@ public class PreplannedWorkoutActivity extends AppCompatActivity implements AddE
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError(error -> Toast.makeText(getApplicationContext(), "Error inserting exercise: " + exerciseName + " in database.", Toast.LENGTH_SHORT))
+                .doOnComplete(() -> {
+                    ConstraintLayout exerciseNameLayout = (ConstraintLayout) LayoutInflater.from(this).inflate(R.layout.preplanned_exercise_list_row, null);
+                    exerciseNameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.workout_list_border, null));
+                    TextView exerciseLabelTextView = exerciseNameLayout.findViewById(R.id.preplannedExerciseNameTextView);
+                    exerciseLabelTextView.setText(exerciseName);
+
+                    LinearLayout exerciseLayout = findViewById(R.id.WorkoutContentLinearLayout);
+                    exerciseLayout.addView(exerciseNameLayout);
+                    ScrollView exerciseScrollView = findViewById(R.id.exerciseEntryScrollView);
+                    exerciseScrollView.postDelayed(() -> exerciseScrollView.fullScroll(ScrollView.FOCUS_DOWN), 100L);
+                })
                 .subscribe();
     }
 }
