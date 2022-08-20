@@ -37,6 +37,7 @@ public class PreplannedWorkoutActivity extends AppCompatActivity implements AddE
         ExerciseInfoDialogFragment.NoticeDialogListener {
 
     public static final String WORKOUT_UUID_KEY = "workout-uuid-key";
+    public static final String EXERCISE_NAME_TEXT_VIEW_TAG = "exercise-name-text-view_key";
 
     private String workoutUUID;
 
@@ -74,11 +75,19 @@ public class PreplannedWorkoutActivity extends AppCompatActivity implements AddE
         if(!workout.exercisesAndSets.isEmpty()){
             LinearLayout exerciseLayout = findViewById(R.id.WorkoutContentLinearLayout);
             for (ExerciseAndSets exercise : workout.exercisesAndSets) {
+                String exerciseName = exercise.exercise.exerciseName;
                 ConstraintLayout exerciseNameLayout = (ConstraintLayout) LayoutInflater.from(this).inflate(R.layout.preplanned_exercise_list_row, null);
                 exerciseNameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.workout_list_border, null));
+                exerciseNameLayout.setId(View.generateViewId());
+                exerciseNameLayout.setTag(exercise.exercise.exerciseUUID);
                 TextView exerciseLabelTextView = exerciseNameLayout.findViewById(R.id.preplannedExerciseNameTextView);
-                exerciseLabelTextView.setText(exercise.exercise.exerciseName);
+                exerciseLabelTextView.setOnClickListener(v -> showExerciseInfo(exerciseName));
+                exerciseLabelTextView.setText(exerciseName);
                 exerciseLayout.addView(exerciseNameLayout);
+                exerciseLabelTextView.setOnLongClickListener(v -> {
+                    delete_exercise(exerciseNameLayout.getId());
+                    return false;
+                });
             }
         }
     }
@@ -111,6 +120,11 @@ public class PreplannedWorkoutActivity extends AppCompatActivity implements AddE
         newFragment.show(getSupportFragmentManager(), "addExercise");
     }
 
+    public void delete_exercise(int idToDelete){
+        DialogFragment newFragment = new DeleteExerciseDialogFragment(idToDelete);
+        newFragment.show(getSupportFragmentManager(), "deleteExercise");
+    }
+
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
         if(dialog instanceof DeleteExerciseDialogFragment)
@@ -129,7 +143,23 @@ public class PreplannedWorkoutActivity extends AppCompatActivity implements AddE
     public void onDialogNegativeClick(DialogFragment dialog) {}
 
     private void handleDeleteExerciseDialogPositiveClick(DialogFragment dialog){
+        LinearLayout workoutContentLinearLayout = findViewById(R.id.WorkoutContentLinearLayout);
+        int idToDelete = ((DeleteExerciseDialogFragment) dialog).getIdToDelete();
+        View viewToDelete = findViewById(idToDelete);
 
+        Exercise exercise = new Exercise();
+        exercise.parentWorkoutUUID = workoutUUID;
+        exercise.exerciseUUID = viewToDelete.getTag().toString();
+        exercise.exerciseName = ((TextView) viewToDelete.findViewById(R.id.preplannedExerciseNameTextView)).getText().toString();
+
+        Disposable d = AppDatabase.getInstance(getApplicationContext()).exerciseDoa().delete(exercise)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError(error -> Toast.makeText(getApplicationContext(), "Error deleting exercise from database.", Toast.LENGTH_SHORT))
+                .subscribe(() -> {
+                    workoutContentLinearLayout.removeView(viewToDelete);
+                    Toast.makeText(getApplicationContext(), "Exercise Deleted", Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void handleAddExerciseDialogPositiveClick(@NonNull DialogFragment dialog){
@@ -152,8 +182,15 @@ public class PreplannedWorkoutActivity extends AppCompatActivity implements AddE
                 .doOnComplete(() -> {
                     ConstraintLayout exerciseNameLayout = (ConstraintLayout) LayoutInflater.from(this).inflate(R.layout.preplanned_exercise_list_row, null);
                     exerciseNameLayout.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.workout_list_border, null));
+                    exerciseNameLayout.setTag(exercise.exerciseUUID);
+                    exerciseNameLayout.setId(View.generateViewId());
+
                     TextView exerciseLabelTextView = exerciseNameLayout.findViewById(R.id.preplannedExerciseNameTextView);
                     exerciseLabelTextView.setText(exerciseName);
+                    exerciseLabelTextView.setOnLongClickListener(v -> {
+                        delete_exercise(exerciseNameLayout.getId());
+                        return false;
+                    });
 
                     LinearLayout exerciseLayout = findViewById(R.id.WorkoutContentLinearLayout);
                     exerciseLayout.addView(exerciseNameLayout);
