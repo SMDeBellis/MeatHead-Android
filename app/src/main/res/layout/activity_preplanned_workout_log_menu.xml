@@ -47,7 +47,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/workoutStartDateHeaderTextView"
+            android:id="@+id/workoutCreationDateHeaderTextView"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
