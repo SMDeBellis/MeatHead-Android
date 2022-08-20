@@ -49,6 +49,10 @@ public class PreplannedWorkoutLogMenuActivity extends AppCompatActivity implemen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preplanned_workout_log_menu);
+        View exerciseHeader = findViewById(R.id.workoutNameHeaderTextView);
+        exerciseHeader.setOnClickListener(this::clickSortByWorkoutName);
+        View creationDateHeader = findViewById(R.id.workoutCreationDateHeaderTextView);
+        creationDateHeader.setOnClickListener(this::clickSortByCreationDate);
         updateWorkoutList();
     }
 
@@ -149,6 +153,18 @@ public class PreplannedWorkoutLogMenuActivity extends AppCompatActivity implemen
     public void onDialogPositiveClick(DialogFragment dialog) {
         if(dialog instanceof AddWorkoutDialogFragment)
             onAddWorkoutDialogPositiveClick(dialog);
+    }
+
+    public void clickSortByWorkoutName(View v){
+        orderBy = "workout-name";
+        workoutNameReversed = !workoutNameReversed;
+        updateWorkoutList();
+    }
+
+    public void clickSortByCreationDate(View v){
+        orderBy = "creation-date";
+        creationDateReveresed = !creationDateReveresed;
+        updateWorkoutList();
     }
 
     @Override
