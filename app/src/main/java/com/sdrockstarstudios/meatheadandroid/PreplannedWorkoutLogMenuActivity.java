@@ -282,27 +282,11 @@ public class PreplannedWorkoutLogMenuActivity extends AppCompatActivity implemen
 
     private List<Workout> orderWorkoutsByCreationDate(boolean reversed){
         List<Workout> workouts = new ArrayList<>(availableWorkouts.values());
-        Collections.sort(workouts, (x, y) -> (int) (x.startDate.getTime() - y.startDate.getTime()));
+        Collections.sort(workouts, (x, y) -> x.startDate.compareTo(y.startDate));
         if(reversed)
             Collections.reverse(workouts);
         return workouts;
     }
-
-    private List<Workout> orderWorkoutsByEndDate(boolean reversed){
-        List<Workout> workouts = new ArrayList<>(availableWorkouts.values());
-        Collections.sort(workouts, (x, y) -> {
-            if(x.endDate == null)
-                return 1;
-            if(y.endDate == null)
-                return - 1;
-            return (int) (x.endDate.getTime() - y.endDate.getTime());
-        });
-        if(reversed)
-            Collections.reverse(workouts);
-        return workouts;
-    }
-
-
 
     private Map<String, Workout> createUUIDToWorkoutMapping(List<Workout> workouts){
         HashMap<String, Workout> workoutMapping = new HashMap<>();
