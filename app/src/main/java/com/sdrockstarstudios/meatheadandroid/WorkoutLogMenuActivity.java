@@ -285,7 +285,7 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
 
     private List<Workout> orderWorkoutsByStartDate(boolean reversed){
         List<Workout> workouts = new ArrayList<>(availableWorkouts.values());
-        Collections.sort(workouts, (x, y) -> (int) (x.startDate.getTime() - y.startDate.getTime()));
+        Collections.sort(workouts, (x, y) -> x.startDate.compareTo(y.startDate));
         if(reversed)
             Collections.reverse(workouts);
         return workouts;
@@ -298,7 +298,7 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
                 return 1;
             if(y.endDate == null)
                 return - 1;
-            return (int) (x.endDate.getTime() - y.endDate.getTime());
+            return x.endDate.compareTo(y.endDate);
         });
         if(reversed)
             Collections.reverse(workouts);
