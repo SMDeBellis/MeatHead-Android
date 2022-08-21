@@ -102,7 +102,7 @@ public class WorkoutLogActivity extends AppCompatActivity
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError(error -> Toast.makeText(this, "Error ending workout.", Toast.LENGTH_SHORT))
                 .doOnComplete(() -> {
-                    Intent intent = new Intent(this, WorkoutLogMenuActivity.class);
+                    Intent intent = new Intent(this, CurrentWorkoutLogMenuActivity.class);
                     startActivity(intent);
                 })
                 .subscribe();
@@ -185,7 +185,7 @@ public class WorkoutLogActivity extends AppCompatActivity
 
     private void handleAddExerciseDialogPositiveClick(@NonNull DialogFragment dialog){
         EditText exerciseNameEditText = dialog.getDialog().findViewById(R.id.exercise_name_entry);
-        String exerciseName = exerciseNameEditText.getText().toString();
+        String exerciseName = exerciseNameEditText.getText().toString().trim();
 
         Checkable repsOnlyCheckbox = dialog.getDialog().findViewById(R.id.reps_only_checkbox);
         boolean repsOnly = repsOnlyCheckbox.isChecked();

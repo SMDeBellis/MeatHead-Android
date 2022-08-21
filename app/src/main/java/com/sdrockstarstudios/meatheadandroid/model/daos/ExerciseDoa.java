@@ -8,6 +8,7 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 
 import com.sdrockstarstudios.meatheadandroid.model.relations.ExerciseAndSets;
+import com.sdrockstarstudios.meatheadandroid.model.relations.WorkoutAndExercises;
 import com.sdrockstarstudios.meatheadandroid.model.tables.Exercise;
 
 import java.util.List;
@@ -22,9 +23,15 @@ public interface ExerciseDoa {
     @Query("SELECT * FROM exercise")
     public Single<List<ExerciseAndSets>> getExerciseAndSets();
 
+    @Transaction
+    @Query("DELETE FROM exercise where exerciseUUID = (:exerciseUUID)")
+    int deleteExerciseFromUUID(String exerciseUUID);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable insert(Exercise exercise);
 
     @Delete
     Completable delete(Exercise exercise);
+
+
 }

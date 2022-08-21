@@ -39,7 +39,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWorkoutDialogFragment.NoticeDialogListener{
+public class CurrentWorkoutLogMenuActivity extends AppCompatActivity implements AddWorkoutDialogFragment.NoticeDialogListener{
 
     private Map<String, Workout> availableWorkouts;
 
@@ -75,7 +75,7 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_workout_log_menu);
+        setContentView(R.layout.activity_current_workout_log_menu);
         updateWorkoutList();
     }
 
@@ -307,7 +307,7 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
 
     private void onAddWorkoutDialogPositiveClick(DialogFragment dialog){
         EditText workoutNameEditText = dialog.getDialog().findViewById(R.id.workout_name_entry);
-        String workoutName = workoutNameEditText.getText().toString();
+        String workoutName = workoutNameEditText.getText().toString().trim();
         String uuid = UUID.randomUUID().toString();
 
         // insert workout into database
@@ -315,6 +315,7 @@ public class WorkoutLogMenuActivity extends AppCompatActivity implements AddWork
         workout.startDate = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()).getTime();
         workout.workoutUUID = uuid;
         workout.workoutName = workoutName;
+        workout.preplanned = false;
         AppDatabase.getInstance(getApplicationContext()).workoutDao().insert(workout)
                 .subscribeOn(Schedulers.io())
                 .doOnError(error -> Toast.makeText(getApplicationContext(), "Error inserting workout: " + workoutName + " in database.", Toast.LENGTH_SHORT))
