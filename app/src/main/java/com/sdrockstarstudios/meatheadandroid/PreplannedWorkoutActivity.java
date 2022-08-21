@@ -164,7 +164,7 @@ public class PreplannedWorkoutActivity extends AppCompatActivity implements AddE
 
     private void handleAddExerciseDialogPositiveClick(@NonNull DialogFragment dialog){
         EditText exerciseNameEditText = dialog.getDialog().findViewById(R.id.exercise_name_entry);
-        String exerciseName = exerciseNameEditText.getText().toString();
+        String exerciseName = exerciseNameEditText.getText().toString().trim();
 
         Checkable repsOnlyCheckbox = dialog.getDialog().findViewById(R.id.reps_only_checkbox);
         boolean repsOnly = repsOnlyCheckbox.isChecked();

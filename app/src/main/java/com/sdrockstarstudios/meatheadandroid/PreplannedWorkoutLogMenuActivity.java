@@ -172,7 +172,7 @@ public class PreplannedWorkoutLogMenuActivity extends AppCompatActivity implemen
 
     private void onAddWorkoutDialogPositiveClick(DialogFragment dialog){
         EditText workoutNameEditText = dialog.getDialog().findViewById(R.id.workout_name_entry);
-        String workoutName = workoutNameEditText.getText().toString();
+        String workoutName = workoutNameEditText.getText().toString().trim();
         String uuid = UUID.randomUUID().toString();
 
         // insert workout into database
