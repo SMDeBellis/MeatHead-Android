@@ -61,8 +61,6 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
-    //TODO: Need to add creationDate to table and use the existing startData for the existing workouts.
-
     static final Migration MIGRATION_2_3 = new Migration(2, 3) {
         @Override
         public void migrate(@NonNull @io.reactivex.annotations.NonNull SupportSQLiteDatabase database) {
