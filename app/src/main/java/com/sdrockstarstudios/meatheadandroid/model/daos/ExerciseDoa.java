@@ -1,5 +1,7 @@
 package com.sdrockstarstudios.meatheadandroid.model.daos;
 
+import android.database.Cursor;
+
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -11,6 +13,7 @@ import com.sdrockstarstudios.meatheadandroid.model.relations.ExerciseAndSets;
 import com.sdrockstarstudios.meatheadandroid.model.relations.WorkoutAndExercises;
 import com.sdrockstarstudios.meatheadandroid.model.tables.Exercise;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Completable;
@@ -26,6 +29,10 @@ public interface ExerciseDoa {
     @Transaction
     @Query("DELETE FROM exercise where exerciseUUID = (:exerciseUUID)")
     int deleteExerciseFromUUID(String exerciseUUID);
+
+    @Transaction
+    @Query("SELECT exerciseName from exercise;")
+    Single<List<String>> getExerciseNames();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable insert(Exercise exercise);
