@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/user"
+        android:icon="@mipmap/ic_launcher"
+        app:showAsAction="ifRoom|withText"
+        android:title="User">
+
+        <menu>
+            <item
+                android:id="@+id/signout"
+                app:showAsAction="ifRoom|withText"
+                android:title="Sign Out" />
+        </menu>
+    </item>
+</menu>
