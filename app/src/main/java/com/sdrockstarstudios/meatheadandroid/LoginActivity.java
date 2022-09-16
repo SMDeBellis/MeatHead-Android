@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends MeatheadBaseActivity {
 
     public static final String LOGIN_ACTIVITY_TAG = "LoginActivity";
 
@@ -55,6 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         // Create and launch sign-in intent
         Intent signInIntent = AuthUI.getInstance()
                 .createSignInIntentBuilder()
+                .setIsSmartLockEnabled(false)
                 .setAvailableProviders(providers)
                 .setTheme(R.style.Theme_MeatHeadAndroid)
                 .build();
