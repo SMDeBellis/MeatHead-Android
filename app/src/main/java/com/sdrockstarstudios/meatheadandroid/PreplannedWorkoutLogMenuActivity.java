@@ -38,7 +38,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class PreplannedWorkoutLogMenuActivity extends AppCompatActivity implements AddWorkoutDialogFragment.NoticeDialogListener {
+public class PreplannedWorkoutLogMenuActivity extends MeatheadBaseActivity implements AddWorkoutDialogFragment.NoticeDialogListener {
 
     private Map<String, Workout> availableWorkouts;
     private String orderBy = "workout-name";

@@ -32,7 +32,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class PreplannedWorkoutActivity extends AppCompatActivity implements AddExerciseDialogFragment.NoticeDialogListener,
+public class PreplannedWorkoutActivity extends MeatheadBaseActivity implements AddExerciseDialogFragment.NoticeDialogListener,
         DeleteExerciseDialogFragment.NoticeDialogListener,
         ExerciseInfoDialogFragment.NoticeDialogListener {
 

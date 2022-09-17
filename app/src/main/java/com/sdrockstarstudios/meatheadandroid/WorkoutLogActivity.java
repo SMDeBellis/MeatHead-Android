@@ -28,7 +28,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class WorkoutLogActivity extends AppCompatActivity
+public class WorkoutLogActivity extends MeatheadBaseActivity
         implements AddExerciseDialogFragment.NoticeDialogListener, DeleteExerciseDialogFragment.NoticeDialogListener,
         DeleteSetDialogFragment.NoticeDialogListener, EndWorkoutDialogFragment.NoticeDialogListener,
         ExerciseInfoDialogFragment.NoticeDialogListener {
