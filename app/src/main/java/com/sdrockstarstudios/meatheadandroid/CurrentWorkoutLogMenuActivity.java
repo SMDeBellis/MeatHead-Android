@@ -39,7 +39,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class CurrentWorkoutLogMenuActivity extends AppCompatActivity implements AddWorkoutDialogFragment.NoticeDialogListener{
+public class CurrentWorkoutLogMenuActivity extends MeatheadBaseActivity implements AddWorkoutDialogFragment.NoticeDialogListener{
 
     private Map<String, Workout> availableWorkouts;
 

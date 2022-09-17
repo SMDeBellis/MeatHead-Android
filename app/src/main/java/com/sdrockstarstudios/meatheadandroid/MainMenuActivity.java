@@ -1,12 +1,11 @@
 package com.sdrockstarstudios.meatheadandroid;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-public class MainMenuActivity extends AppCompatActivity {
+
+public class MainMenuActivity extends MeatheadBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
