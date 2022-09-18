@@ -3,10 +3,12 @@ package com.sdrockstarstudios.meatheadandroid;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.firebase.ui.auth.AuthUI;
@@ -48,9 +50,9 @@ public class LoginActivity extends MeatheadBaseActivity {
         // Choose authentication providers
         Log.i(LOGIN_ACTIVITY_TAG, "Creating sign in intent.");
         List<AuthUI.IdpConfig> providers = Arrays.asList(
-                new AuthUI.IdpConfig.EmailBuilder().build());
+                new AuthUI.IdpConfig.EmailBuilder().build(),
 //                new AuthUI.IdpConfig.PhoneBuilder().build(),
-//                new AuthUI.IdpConfig.GoogleBuilder().build());
+                new AuthUI.IdpConfig.GoogleBuilder().build());
 
         // Create and launch sign-in intent
         Intent signInIntent = AuthUI.getInstance()
