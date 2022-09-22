@@ -8,8 +8,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MeatHeadAndroid">
-        <activity android:name=".CurrentWorkoutLogMenuActivity"
+        android:theme="@style/Theme.MeatHeadAndroid"
+        android:usesCleartextTraffic="true"> <!-- remove for production -->
+    <activity android:name=".CurrentWorkoutLogMenuActivity"
             android:parentActivityName=".MainMenuActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->

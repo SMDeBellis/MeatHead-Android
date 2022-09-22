@@ -18,6 +18,7 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.ActionCodeSettings;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,6 +41,7 @@ public class LoginActivity extends MeatheadBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        FirebaseAuth.getInstance().useEmulator("10.0.2.2", 9099); // remove for production
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         createSignInIntent();
